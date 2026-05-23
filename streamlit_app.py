@@ -3,8 +3,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-import yaml
-from yaml.loader import SafeLoader
 
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
