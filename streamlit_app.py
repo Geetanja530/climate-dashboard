@@ -60,132 +60,53 @@ PLOT_LAYOUT = dict(
 GREEN_SEQ = ["#0d3a1a", "#1a6a2a", "#2a9a4a", "#4dff91"]
 
 # ══════════════════════════════════════════════════════════════════════════════
-# AUTH SYSTEM
+# GOOGLE ANALYTICS 4 — FREE VISITOR TRACKING
+# ─────────────────────────────────────────────────────────────────────────────
+# HOW TO SET UP (5 minutes, completely free):
+#   1. Go to https://analytics.google.com — sign in with Google
+#   2. Click "Start measuring" → name your account → create a Property
+#   3. Choose "Web" → enter your Streamlit app URL → click Create Stream
+#   4. Copy the Measurement ID (looks like  G-EJ5BDN2SG8)
+#   5. Replace "G-EJ5BDN2SG8" below with your actual ID & push to GitHub
+#   6. Data appears in GA within 24 hours — see visitors, countries, devices!
 # ══════════════════════════════════════════════════════════════════════════════
 
-def init_auth():
-    try:
-        import streamlit_authenticator as stauth
-        config = {
-            'credentials': {
-                'usernames': {
-                    'admin': {
-                        'name': 'Admin User',
-                        'email': 'admin@example.com',
-                        'password': stauth.Hasher(['admin123']).generate()[0],
-                        'role': 'admin'
-                    }
-                }
-            },
-            'cookie': {'name': 'climate_dash_cookie', 'key': 'climate2026secret', 'expiry_days': 30},
-            'pre-authorized': {'emails': []}
-        }
-        if hasattr(st, 'secrets') and 'auth_config' in st.secrets:
-            config = dict(st.secrets['auth_config'])
-        authenticator = stauth.Authenticate(
-            config['credentials'],
-            config['cookie']['name'],
-            config['cookie']['key'],
-            config['cookie']['expiry_days'],
-        )
-        return authenticator, config, True
-    except ImportError:
-        return None, None, False
+GA_MEASUREMENT_ID = "G-EJ5BDN2SG8"  # ← PASTE YOUR REAL GA4 ID HERE
 
+st.markdown(f"""
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA_MEASUREMENT_ID}', {{
+    page_title: 'Climate Risk ESG Dashboard',
+    page_location: window.location.href,
+  }});
+  document.addEventListener('click', function(e) {{
+    var tab = e.target.closest('[data-baseweb="tab"]');
+    if (tab) {{
+      gtag('event', 'tab_click', {{
+        event_category: 'Navigation',
+        event_label: tab.innerText.trim()
+      }});
+    }}
+  }});
+</script>
+""", unsafe_allow_html=True)
 
-def show_auth_ui():
-    authenticator, config, lib_available = init_auth()
-
-    if not lib_available:
-        st.markdown("""
-        <div class='auth-box'>
-            <h2 style='color:#4dff91;text-align:center;margin-bottom:4px'>🌍 Climate Risk Dashboard</h2>
-            <p style='color:#90c0a0;text-align:center;margin-bottom:24px;font-size:0.9rem'>
-                Sign in to access ESG & Climate Intelligence
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        col_l, col_c, col_r = st.columns([1, 2, 1])
-        with col_c:
-            tab_login, tab_register = st.tabs(["🔑 Login", "📝 Register"])
-
-            with tab_login:
-                username = st.text_input("Username", key="login_user")
-                password = st.text_input("Password", type="password", key="login_pass")
-                if st.button("Login", use_container_width=True, key="login_btn"):
-                    users = st.session_state.get("registered_users", {
-                        "admin": {"password": "admin123", "name": "Admin"}
-                    })
-                    if username in users and users[username]["password"] == password:
-                        st.session_state["authenticated"] = True
-                        st.session_state["current_user"] = username
-                        st.session_state["current_name"] = users[username]["name"]
-                        st.rerun()
-                    else:
-                        st.error("❌ Invalid username or password")
-                st.caption("Default: username `admin` / password `admin123`")
-
-            with tab_register:
-                new_name    = st.text_input("Full Name", key="reg_name")
-                new_email   = st.text_input("Email", key="reg_email")
-                new_user    = st.text_input("Choose Username", key="reg_user")
-                new_pass    = st.text_input("Choose Password", type="password", key="reg_pass")
-                new_pass2   = st.text_input("Confirm Password", type="password", key="reg_pass2")
-                if st.button("Create Account", use_container_width=True, key="reg_btn"):
-                    if not all([new_name, new_email, new_user, new_pass]):
-                        st.error("Please fill all fields.")
-                    elif new_pass != new_pass2:
-                        st.error("Passwords do not match.")
-                    else:
-                        users = st.session_state.get("registered_users", {
-                            "admin": {"password": "admin123", "name": "Admin"}
-                        })
-                        if new_user in users:
-                            st.error("Username already taken.")
-                        else:
-                            users[new_user] = {"password": new_pass, "name": new_name, "email": new_email}
-                            st.session_state["registered_users"] = users
-                            st.success(f"✅ Account created! You can now login as **{new_user}**")
-
-        return False, None, None
-
-    col_l, col_c, col_r = st.columns([1, 2, 1])
-    with col_c:
-        st.markdown("<div class='auth-box'>", unsafe_allow_html=True)
-        st.markdown("## 🌍 Climate Risk Dashboard")
-        name, auth_status, username = authenticator.login(location='main')
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        if auth_status is False:
-            st.error("❌ Incorrect username or password")
-        if auth_status is None:
-            st.info("👆 Enter your credentials to access the dashboard")
-
-        with st.expander("📝 New here? Register an account"):
-            try:
-                email_new, username_new, name_new = authenticator.register_user(location='main', pre_authorization=False)
-                if email_new:
-                    st.success(f"✅ Registered! You can now login as **{username_new}**")
-            except Exception as e:
-                st.error(str(e))
-
-    return auth_status, name, username
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CHECK AUTH STATE
-# ══════════════════════════════════════════════════════════════════════════════
-
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
-
-if not st.session_state.get("authenticated"):
-    is_auth, auth_name, auth_user = show_auth_ui()
-    if not is_auth:
-        st.stop()
-
-current_name = st.session_state.get("current_name", "User")
+# ── In-app session visitor counter ───────────────────────────────────────────
+# Counts visits within the current server session (resets on server restart).
+# Replace with Supabase/Firebase for permanent counters across restarts.
+if "total_visits" not in st.session_state:
+    st.session_state["total_visits"] = 0
+if "this_session_counted" not in st.session_state:
+    st.session_state["this_session_counted"] = False
+if not st.session_state["this_session_counted"]:
+    st.session_state["total_visits"] += 1
+    st.session_state["this_session_counted"] = True
+visit_count = st.session_state["total_visits"]
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DATA — Updated to 2026 (latest published figures as of May 2026)
@@ -278,11 +199,15 @@ COMPANY_ESG = pd.DataFrame({
 # ══════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
-st.sidebar.markdown(f"### 👤 Welcome, {current_name}!")
-if st.sidebar.button("🚪 Logout"):
-    st.session_state["authenticated"] = False
-    st.rerun()
-
+st.sidebar.markdown(
+    f"<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;"
+    f"padding:10px 14px;margin-bottom:8px;text-align:center'>"
+    f"<span style='color:#90c0a0;font-size:0.78rem'>👥 Session Visits</span><br>"
+    f"<span style='color:#4dff91;font-size:1.6rem;font-weight:700'>{visit_count}</span><br>"
+    f"<span style='color:#609070;font-size:0.7rem'>All-time stats → Google Analytics</span>"
+    f"</div>",
+    unsafe_allow_html=True
+)
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🌿 Dashboard Controls")
 
