@@ -35,12 +35,7 @@ hr { border-color: #1a4a2a; }
 .stProgress > div > div { background: linear-gradient(90deg, #1a5a2a, #4dff91); }
 .stTextInput > div > div { background: #0d2b1a; border-color: #2a6a3a; color: #e0f0e0; }
 .stSuccess { background: #0d3a1a; border-left: 4px solid #4dff91; }
-.auth-box {
-    background: linear-gradient(135deg, #0d3a1a, #0a2a2a);
-    border: 1px solid #2a6a3a; border-radius: 16px;
-    padding: 40px; max-width: 440px; margin: 60px auto;
-    box-shadow: 0 8px 40px rgba(0,200,80,0.15);
-}
+
 .source-badge {
     display: inline-block; background: #0d3a1a; border: 1px solid #2a6a3a;
     border-radius: 6px; padding: 3px 10px; font-size: 0.75rem; color: #4dff91; margin: 2px 4px;
@@ -199,15 +194,7 @@ COMPANY_ESG = pd.DataFrame({
 # ══════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
-st.sidebar.markdown(
-    f"<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;"
-    f"padding:10px 14px;margin-bottom:8px;text-align:center'>"
-    f"<span style='color:#90c0a0;font-size:0.78rem'>👥 Session Visits</span><br>"
-    f"<span style='color:#4dff91;font-size:1.6rem;font-weight:700'>{visit_count}</span><br>"
-    f"<span style='color:#609070;font-size:0.7rem'>All-time stats → Google Analytics</span>"
-    f"</div>",
-    unsafe_allow_html=True
-)
+# visit_count tracked silently via GA — not shown to users
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🌿 Dashboard Controls")
 
