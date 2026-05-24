@@ -624,7 +624,7 @@ with tab5:
                  title="Scope 1 Emissions (Mt CO₂e) — Company Level")
     fig.update_layout(**PLOT_LAYOUT)
     st.plotly_chart(fig, use_container_width=True)
-    st.dataframe(fco.style.background_gradient(subset=["ESG_Score"], cmap="Greens"), use_container_width=True)
+st.dataframe(fco, use_container_width=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 6 — IPCC TARGETS
