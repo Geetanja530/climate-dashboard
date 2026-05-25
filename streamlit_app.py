@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-
+mport streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Climate Risk & ESG Intelligence Dashboard",
@@ -11,7 +11,19 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+# — Google Analytics —        ← ADD THIS BLOCK after set_page_config
+def inject_ga():
+    components.html("""
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJ5BDN2SG8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EJ5BDN2SG8');
+        </script>
+    """, height=0)
 
+inject_ga()
 # ── Theme ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
