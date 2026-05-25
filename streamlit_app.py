@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-mport streamlit.components.v1 as components
+import streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Climate Risk & ESG Intelligence Dashboard",
