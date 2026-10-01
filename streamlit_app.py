@@ -252,10 +252,20 @@ st.markdown("# 🌍 Climate Risk & ESG Intelligence Dashboard")
 st.markdown(
     f"<p style='color:#90c0a0;font-size:1rem;margin-top:-10px'>"
     f"Sustainable Finance · ESG Analytics · Climate Risk Modelling · "
-    f"<b style='color:#4dff91'>{scope_label} View · Data up to 2026</b></p>",
-    unsafe_allow_html=True
+f"<b style='color:#4dff91'>{scope_label} View · Latest available data through 2026</b></p>",    unsafe_allow_html=True
 )
 st.markdown("---")
+# ── Data Status ───────────────────────────────────────────────────────────────
+if selected_year == 2026:
+    st.info(
+        "🟡 **2026 Data Status:** Latest available / provisional indicators. "
+        "Some annual climate indicators are shown using the latest completed "
+        "observation where full-year 2026 data are not yet available."
+    )
+else:
+    st.success(
+        f"🟢 **{selected_year} Data Status:** Historical / completed-year dataset."
+    )
 
 # ══════════════════════════════════════════════════════════════════════════════
 # KPI CARDS
