@@ -149,8 +149,8 @@ GLOBAL_DATA = pd.DataFrame({
     # IPCC AR6 + WMO State of Climate 2026
     "Physical_Risk":    [64,   66,   68,   71,   73,   76,   79,   82,   85,   87,   89],
     "Transition_Risk":  [57,   59,   62,   65,   68,   72,   75,   78,   80,   82,   85],
-    # WMO State of Global Climate 2026 — 2025 was hottest year on record at +1.62°C
-    "Temp_Anomaly":     [1.01, 0.92, 0.83, 0.98, 1.02, 1.11, 1.15, 1.45, 1.54, 1.62, 1.58],
+    # WMO State of the Global Climate 2025 — 2025 was about +1.43°C above 1850–1900; 2026 row carries latest completed observation
+    "Temp_Anomaly":     [1.01, 0.92, 0.83, 0.98, 1.02, 1.11, 1.15, 1.45, 1.54, 1.43, 1.43],
     # IPCC AR6 / NOAA 2026 sea level (satellite altimetry, mm above 1993 baseline)
     "Sea_Level_mm":     [77,   82,   86,   90,   97,   102,  108,  115,  122,  129,  136],
 })
@@ -167,8 +167,8 @@ INDIA_DATA = pd.DataFrame({
     # NDMA + MoEF Climate Vulnerability Report 2025
     "Physical_Risk":    [74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   93],
     "Transition_Risk":  [51,   54,   58,   61,   64,   67,   70,   74,   77,   80,   84],
-    # IMD Annual Climate Summary 2026 (India anomaly relative to 1981-2010 baseline)
-    "Temp_Anomaly":     [0.61, 0.71, 0.41, 0.36, 0.29, 0.44, 0.51, 0.65, 0.71, 0.83, 0.91],
+    # IMD Climate of India 2025 — 2025 anomaly +0.28°C relative to 1991–2020; 2026 row carries latest completed observation
+    "Temp_Anomaly":     [0.61, 0.71, 0.41, 0.36, 0.29, 0.44, 0.51, 0.65, 0.71, 0.28, 0.28],
     # MoEF State of Environment Report 2025 — ENSO/La Nina influenced counts
     "Extreme_Events":   [248,  255,  271,  258,  249,  310,  302,  290,  318,  334,  347],
 })
@@ -319,23 +319,23 @@ c1, c2, c3, c4 = st.columns(4)
 if is_global:
     snapshot_card(c1, "🌡️", "Global Temperature", "+1.43°C", "2025", "🟢 OBSERVED",
                   "Annual global mean temperature anomaly relative to the 1850–1900 baseline.")
-    snapshot_card(c2, "🌫️", "CO₂ Emissions", "Latest estimate", "2025/26", "🟡 LATEST",
-                  "Latest global emissions estimate; reference period shown separately from the dashboard year.")
-    snapshot_card(c3, "⚡", "Clean Energy Transition", "Latest indicator", "2026", "🟡 LATEST",
-                  "Latest available energy-transition indicator; not treated as a completed annual observation.")
+    snapshot_card(c2, "🌫️", "Fossil CO₂ Emissions", "38.1 Gt", "2025", "🟡 PROJECTED",
+                  "Global Carbon Budget 2025 projection for fossil CO₂ emissions; not a completed 2026 observation.")
+    snapshot_card(c3, "⚡", "Renewable Electricity", "34%", "2025", "🟢 OBSERVED",
+                  "IEA Global Energy Review 2026: renewables supplied about 34% of global electricity generation in 2025.")
     snapshot_card(c4, "⚠️", "Physical Risk", f"{filtered_df['Physical_Risk'].values[0]}/100", str(selected_year), "🟣 MODELLED",
                   "Dashboard-derived analytical index for comparative climate-risk interpretation.")
 else:
     snapshot_card(c1, "🌡️", "India Temperature", "+0.28°C", "2025", "🟢 OBSERVED",
                   "Annual mean temperature anomaly relative to the 1991–2020 reference period.")
-    snapshot_card(c2, "🌫️", "GHG Inventory", "Latest official", "2022", "🔵 INVENTORY",
-                  "Latest official national greenhouse-gas inventory year; newer dashboard years do not imply a 2026 inventory.")
-    snapshot_card(c3, "⚡", "Clean Energy Capacity", "Latest available", "2026", "🟡 LATEST",
-                  "Current-year clean-energy indicator based on the latest available reporting period.")
+    snapshot_card(c2, "🌫️", "GHG Inventory", "3.396 GtCO₂e", "2022", "🔵 INVENTORY",
+                  "India BTR-1 total GHG emissions excluding LULUCF. Latest official inventory year is 2022.")
+    snapshot_card(c3, "⚡", "Non-Fossil Capacity", "304.33 GW", "31 Aug 2026", "🟡 LATEST",
+                  "MNRE cumulative non-fossil installed power capacity: renewables including large hydro plus nuclear.")
     snapshot_card(c4, "⚠️", "Physical Risk", f"{filtered_df['Physical_Risk'].values[0]}/100", str(selected_year), "🟣 MODELLED",
                   "Dashboard-derived analytical index; this is not an official government risk score.")
 
-st.caption("🟢 Observed  •  🟡 Latest/Provisional  •  🔵 Official Inventory  •  🟣 Dashboard-Modelled")
+st.caption("🟢 Observed  •  🟡 Latest/Projected  •  🔵 Official Inventory  •  🟣 Dashboard-Modelled")
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
