@@ -683,7 +683,7 @@ with tab5:
     fig = px.bar(fco.sort_values("Scope1_Mt", ascending=False),
                  x="Company", y="Scope1_Mt", color="Sector",
                  title="Scope 1 Emissions (Mt CO₂e) — Company Level")
-      fig.update_layout(**PLOT_LAYOUT)
+    fig.update_layout(**PLOT_LAYOUT)
     st.plotly_chart(fig, use_container_width=True)
     st.dataframe(fco, use_container_width=True)
 # ─────────────────────────────────────────────────────────────────────────────
