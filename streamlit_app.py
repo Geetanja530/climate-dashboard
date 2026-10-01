@@ -381,24 +381,24 @@ with tab2:
 
     if is_global:
         st.subheader("🗺️ Global Country-level Climate Risk — IPCC AR6 + ND-GAIN 2025")
-        fig = px.scatter_mapbox(
+        fig = px.scatter_map(
             GLOBAL_COUNTRY_RISK, lat="Lat", lon="Lon",
             size=risk_col, color=risk_col, hover_name="Country",
             hover_data={risk_col:True,"ESG_Score":True,"Renewable_Pct":True,"Lat":False,"Lon":False},
             color_continuous_scale=["#0d3a1a","#ffcc00","#ff4444"],
             size_max=55, zoom=1.2, center={"lat":20,"lon":10},
-            mapbox_style="carto-darkmatter",
+            map_style="carto-darkmatter",
             title=f"Global {risk_type} by Country"
         )
     else:
         st.subheader("🗺️ India State-wise Climate Risk — NDMA Vulnerability Atlas + MoEF SoE 2025")
-        fig = px.scatter_mapbox(
+        fig = px.scatter_map(
             INDIA_STATE_RISK, lat="Lat", lon="Lon",
             size=risk_col, color=risk_col, hover_name="State",
             hover_data={risk_col:True,"Flood_Risk":True,"Drought_Risk":True,"Cyclone_Risk":True,"Lat":False,"Lon":False},
             color_continuous_scale=["#0d3a1a","#ffcc00","#ff4444"],
             size_max=40, zoom=4, center={"lat":22.5,"lon":80.0},
-            mapbox_style="carto-darkmatter",
+            map_style="carto-darkmatter",
             title=f"India {risk_type} by State"
         )
     fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="#c0e0c0", height=530, margin=dict(l=0,r=0,t=40,b=0))
