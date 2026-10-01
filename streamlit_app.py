@@ -341,10 +341,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
     "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🤖 AI Analyzer",
     "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive",
-    "🌱 Carbon Intelligence"
+    "🌱 Carbon Intelligence", "📚 Methodology & Sources"
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1226,7 +1226,39 @@ with tab9:
         "*Simple project-cost intensity over the selected tenure; not an abatement-cost study, NPV/IRR calculation or investment recommendation."
     )
 
-    # ── E. Climate Finance Pre-Screener ───────────────────────────────────────
+    # ── E. Marginal Abatement Cost Tool ──────────────────────────────────────
+    st.markdown("#### 📊 Marginal Abatement Cost Tool")
+    st.markdown(
+        "Compare the simple cost of achieving a tonne of CO₂e reduction. This is an educational "
+        "screening metric, not a full marginal abatement cost curve or investment appraisal."
+    )
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        mac_project_cost_lakh = st.number_input(
+            "Mitigation project cost (₹ lakh)", min_value=0.0, value=float(project_cost_lakh),
+            step=10.0, key="ci_mac_cost"
+        )
+    with m2:
+        mac_annual_reduction = st.number_input(
+            "Annual avoided/reduced emissions (tCO₂e)", min_value=1.0, value=float(annual_reduction),
+            step=100.0, key="ci_mac_reduction"
+        )
+    with m3:
+        mac_life = st.slider("Expected mitigation life (years)", 1, 30, 10, key="ci_mac_life")
+
+    mac_total_reduction = mac_annual_reduction * mac_life
+    mac_cost_rupees = mac_project_cost_lakh * 100000
+    simple_abatement_cost = mac_cost_rupees / mac_total_reduction if mac_total_reduction > 0 else 0
+    mac1, mac2, mac3 = st.columns(3)
+    mac1.metric("Lifetime Reduction", f"{mac_total_reduction:,.0f} tCO₂e")
+    mac2.metric("Simple Abatement Cost", f"₹{simple_abatement_cost:,.0f}/tCO₂e")
+    mac3.metric("Project Life", f"{mac_life} years")
+    st.caption(
+        "Simple abatement cost = project cost ÷ estimated lifetime emission reduction. "
+        "It excludes operating costs, savings, discounting, financing effects and carbon revenues."
+    )
+
+    # ── F. Climate Finance Pre-Screener ───────────────────────────────────────
     st.markdown("#### 🌿 Climate Finance Relevance Pre-Screener")
     s1, s2 = st.columns(2)
     with s1:
@@ -1248,9 +1280,9 @@ with tab9:
         "Educational pre-screen only. It does not certify taxonomy alignment, green-bond eligibility, bankability, carbon-credit eligibility or regulatory approval."
     )
 
-    # ── F. Environmental Impact Translator ────────────────────────────────────
+    # ── G. Environmental Impact Translator ────────────────────────────────────
     st.markdown("---")
-    st.markdown("### 🌍 E. Environmental Impact Translator")
+    st.markdown("### 🌍 G. Environmental Impact Translator")
     impact_left, impact_right = st.columns([1.2, 1])
     with impact_left:
         if target_reduction_pct == 0:
@@ -1293,6 +1325,69 @@ with tab9:
     st.warning(
         "⚠️ **Academic-use note:** Carbon prices, financing assumptions and project outputs in this tab are user-defined scenarios. "
         "They are not live market quotations, investment advice, certification, verification or an assurance of Carbon Credit Certificate issuance."
+    )
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 10 — METHODOLOGY & SOURCES
+# ─────────────────────────────────────────────────────────────────────────────
+with tab10:
+    st.subheader("📚 Methodology, Data Status & Sources")
+    st.markdown(
+        "This dashboard separates official observations and inventories from latest/provisional "
+        "indicators, policy targets and dashboard-modelled analytical indices. This distinction is "
+        "important because environmental datasets are published at different frequencies and reference periods."
+    )
+
+    methodology_df = pd.DataFrame({
+        "Data class": ["OBSERVED", "LATEST / PROJECTED", "INVENTORY", "MODELLED", "TARGET"],
+        "Meaning": [
+            "Completed historical observation for a stated reference period.",
+            "Latest available, provisional, YTD or projected indicator; not treated as a completed annual observation.",
+            "Official greenhouse-gas inventory for the latest published inventory year.",
+            "Dashboard-derived comparative indicator used for analytical interpretation; not an official agency score.",
+            "Policy, climate or scenario benchmark used for progress comparison."
+        ],
+        "Dashboard example": [
+            "2025 global/India temperature",
+            "Latest energy-capacity or emissions estimate",
+            "India official GHG inventory",
+            "Physical and transition risk indices",
+            "Emission-reduction / climate targets"
+        ]
+    })
+    st.dataframe(methodology_df, use_container_width=True, hide_index=True)
+
+    st.markdown("### 🧭 How to interpret the risk scores")
+    st.info(
+        "Physical Risk and Transition Risk values shown as 0–100 scores are dashboard-modelled comparative indices. "
+        "They are used to support relative interpretation across locations/sectors and should not be read as direct "
+        "IPCC, ND-GAIN, NDMA or government-issued scores unless explicitly stated otherwise."
+    )
+
+    st.markdown("### 🌱 Carbon & climate-finance tools")
+    st.markdown(
+        "The Carbon Intelligence tools are scenario-based decision-support calculations. Emission reductions, "
+        "carbon values, financing assumptions, abatement costs and pre-screening outputs are illustrative. "
+        "They do not establish carbon-credit eligibility, taxonomy alignment, regulatory approval, project bankability or investment suitability."
+    )
+
+    st.markdown("### 🔗 Primary reference organisations")
+    st.markdown(
+        "- **WMO** — global climate observations and annual climate reporting.\n"
+        "- **IMD** — India temperature and climate observations.\n"
+        "- **UNFCCC / MoEFCC** — India's national GHG inventory and climate reporting.\n"
+        "- **MNRE / CEA** — renewable and non-fossil electricity-capacity statistics.\n"
+        "- **IEA / Global Carbon Project** — global energy and emissions indicators.\n"
+        "- **BEE** — Indian Carbon Market / CCTS procedures and approved offset methodologies.\n"
+        "- **IPCC** — climate-science assessment and scenario context.\n"
+        "- **SEBI** — sustainability-reporting framework for listed entities."
+    )
+
+    st.markdown("### ⚠️ Key limitations")
+    st.warning(
+        "Reference years differ across indicators; 2026 is the dashboard's latest-data year, not a claim that every "
+        "indicator is a completed 2026 observation. Company ESG and some comparative risk datasets are analytical/illustrative "
+        "and should be replaced with traceable licensed or primary-source datasets for production-grade use."
     )
 
 # ── Footer ────────────────────────────────────────────────────────────────────
