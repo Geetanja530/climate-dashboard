@@ -6,7 +6,7 @@ import json
 import streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Climate Risk & ESG Intelligence Dashboard",
+    page_title="Climate Risk, ESG & Carbon Intelligence Dashboard",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -123,7 +123,20 @@ visit_count = st.session_state["total_visits"]
 # NOTE: To keep data live, replace these DataFrames with API calls to
 #       GCP (globalcarbonproject.org), IEA Data Explorer, or WMO climate APIs.
 # ══════════════════════════════════════════════════════════════════════════════
-
+# ── DATA CLASSIFICATION ───────────────────────────────────────────────────────
+# Historical observations, latest available indicators, modelled dashboard
+# indices and policy targets are kept conceptually separate.
+#
+# IMPORTANT:
+# 2026 is the dashboard's latest-data year. It does NOT imply that every
+# indicator represents a completed full-year 2026 observation.
+#
+# Data status used in this dashboard:
+# OBSERVED   = completed historical observation
+# LATEST     = latest available / YTD / provisional value
+# INVENTORY  = latest official GHG inventory year
+# MODELLED   = dashboard-derived analytical indicator
+# TARGET     = policy or climate target
 GLOBAL_DATA = pd.DataFrame({
     "Year":             [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
     # IEA Global Energy Review 2026 / GCP 2026 preliminary
@@ -136,8 +149,8 @@ GLOBAL_DATA = pd.DataFrame({
     # IPCC AR6 + WMO State of Climate 2026
     "Physical_Risk":    [64,   66,   68,   71,   73,   76,   79,   82,   85,   87,   89],
     "Transition_Risk":  [57,   59,   62,   65,   68,   72,   75,   78,   80,   82,   85],
-    # WMO State of Global Climate 2026 — 2025 was hottest year on record at +1.62°C
-    "Temp_Anomaly":     [1.01, 0.92, 0.83, 0.98, 1.02, 1.11, 1.15, 1.45, 1.54, 1.62, 1.58],
+    # WMO State of the Global Climate 2025 — 2025 was about +1.43°C above 1850–1900; 2026 row carries latest completed observation
+    "Temp_Anomaly":     [1.01, 0.92, 0.83, 0.98, 1.02, 1.11, 1.15, 1.45, 1.54, 1.43, 1.43],
     # IPCC AR6 / NOAA 2026 sea level (satellite altimetry, mm above 1993 baseline)
     "Sea_Level_mm":     [77,   82,   86,   90,   97,   102,  108,  115,  122,  129,  136],
 })
@@ -154,8 +167,8 @@ INDIA_DATA = pd.DataFrame({
     # NDMA + MoEF Climate Vulnerability Report 2025
     "Physical_Risk":    [74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   93],
     "Transition_Risk":  [51,   54,   58,   61,   64,   67,   70,   74,   77,   80,   84],
-    # IMD Annual Climate Summary 2026 (India anomaly relative to 1981-2010 baseline)
-    "Temp_Anomaly":     [0.61, 0.71, 0.41, 0.36, 0.29, 0.44, 0.51, 0.65, 0.71, 0.83, 0.91],
+    # IMD Climate of India 2025 — 2025 anomaly +0.28°C relative to 1991–2020; 2026 row carries latest completed observation
+    "Temp_Anomaly":     [0.61, 0.71, 0.41, 0.36, 0.29, 0.44, 0.51, 0.65, 0.71, 0.28, 0.28],
     # MoEF State of Environment Report 2025 — ENSO/La Nina influenced counts
     "Extreme_Events":   [248,  255,  271,  258,  249,  310,  302,  290,  318,  334,  347],
 })
@@ -248,54 +261,90 @@ else:
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("# 🌍 Climate Risk & ESG Intelligence Dashboard")
+st.markdown("# 🌍 Climate Risk, ESG & Carbon Intelligence Dashboard")
 st.markdown(
     f"<p style='color:#90c0a0;font-size:1rem;margin-top:-10px'>"
     f"Sustainable Finance · ESG Analytics · Climate Risk Modelling · "
-    f"<b style='color:#4dff91'>{scope_label} View · Data up to 2026</b></p>",
-    unsafe_allow_html=True
+f"<b style='color:#4dff91'>{scope_label} View · Latest available data through 2026</b></p>",    unsafe_allow_html=True
 )
 st.markdown("---")
+# ── Data Status ───────────────────────────────────────────────────────────────
+if selected_year == 2026:
+    st.info(
+        "🟡 **2026 Data Status:** Latest available / provisional indicators. "
+        "Some annual climate indicators are shown using the latest completed "
+        "observation where full-year 2026 data are not yet available."
+    )
+else:
+    st.success(
+        f"🟢 **{selected_year} Data Status:** Historical / completed-year dataset."
+    )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# KPI CARDS
+# LATEST ENVIRONMENTAL SNAPSHOT
 # ══════════════════════════════════════════════════════════════════════════════
-def safe_delta(col):
-    if prev_df is not None and col in prev_df.columns:
-        return round(filtered_df[col].values[0] - prev_df[col].values[0], 2)
-    return None
+st.markdown("### 🌍 Latest Environmental Snapshot")
 
-col1, col2, col3, col4 = st.columns(4)
+st.markdown(
+    "<p style='color:#90c0a0;font-size:0.88rem;margin-top:-8px;'>"
+    "Indicators use the latest appropriate reference period. "
+    "Official observations, latest available indicators and dashboard-modelled "
+    "indices are labelled separately."
+    "</p>",
+    unsafe_allow_html=True
+)
 
-def kpi(col, emoji, title, value, delta, bad_if_up=False):
-    if delta is not None:
-        bad = (delta > 0 and bad_if_up) or (delta < 0 and not bad_if_up)
-        color = "#ff6b6b" if bad else "#4dff91"
-        arrow = "▲" if delta >= 0 else "▼"
-        delta_html = f"<div style='color:{color};font-size:0.85rem;margin-top:4px'>{arrow} {abs(delta)}</div>"
-    else:
-        delta_html = ""
-    col.markdown(f"""
-    <div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;
-         border-radius:12px;padding:18px;box-shadow:0 4px 20px rgba(0,200,80,0.1);min-height:105px'>
-      <div style='color:#90c0a0;font-size:0.82rem;margin-bottom:6px'>{emoji} {title}</div>
-      <div style='color:#4dff91;font-size:1.9rem;font-weight:700;line-height:1'>{value}</div>
-      {delta_html}
-    </div>""", unsafe_allow_html=True)
+def snapshot_card(col, emoji, title, value, period, status, note):
+    col.markdown(
+        f"""
+        <div style="
+            background:linear-gradient(135deg,#0d3a1a,#0a2a2a);
+            border:1px solid #2a6a3a;
+            border-radius:12px;
+            padding:18px;
+            min-height:175px;
+            box-shadow:0 4px 20px rgba(0,200,80,0.08);
+        ">
+            <div style="color:#90c0a0;font-size:0.82rem;">{emoji} {title}</div>
+            <div style="color:#4dff91;font-size:1.75rem;font-weight:700;margin-top:8px;">{value}</div>
+            <div style="color:#ffffff;font-size:0.74rem;margin-top:10px;">{status} · {period}</div>
+            <div style="color:#70a080;font-size:0.70rem;margin-top:7px;line-height:1.35;">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-kpi(col1,"🌫️","CO₂ Emissions", f"{filtered_df['CO2_Emissions'].values[0]} Gt",  safe_delta("CO2_Emissions"),  bad_if_up=True)
-kpi(col2,"⚡","Renewable Energy",f"{filtered_df['Renewable_Energy'].values[0]}%", safe_delta("Renewable_Energy"), bad_if_up=False)
-kpi(col3,"📊","ESG Score",       f"{filtered_df['ESG_Score'].values[0]}/100",      safe_delta("ESG_Score"),        bad_if_up=False)
-kpi(col4,"🌡️","Temp Anomaly",   f"+{filtered_df['Temp_Anomaly'].values[0]}°C",   safe_delta("Temp_Anomaly"),     bad_if_up=True)
+c1, c2, c3, c4 = st.columns(4)
 
+if is_global:
+    snapshot_card(c1, "🌡️", "Global Temperature", "+1.43°C", "2025", "🟢 OBSERVED",
+                  "Annual global mean temperature anomaly relative to the 1850–1900 baseline.")
+    snapshot_card(c2, "🌫️", "Fossil CO₂ Emissions", "38.1 Gt", "2025", "🟡 PROJECTED",
+                  "Global Carbon Budget 2025 projection for fossil CO₂ emissions; not a completed 2026 observation.")
+    snapshot_card(c3, "⚡", "Renewable Electricity", "34%", "2025", "🟢 OBSERVED",
+                  "IEA Global Energy Review 2026: renewables supplied about 34% of global electricity generation in 2025.")
+    snapshot_card(c4, "⚠️", "Physical Risk", f"{filtered_df['Physical_Risk'].values[0]}/100", str(selected_year), "🟣 MODELLED",
+                  "Dashboard-derived analytical index for comparative climate-risk interpretation.")
+else:
+    snapshot_card(c1, "🌡️", "India Temperature", "+0.28°C", "2025", "🟢 OBSERVED",
+                  "Annual mean temperature anomaly relative to the 1991–2020 reference period.")
+    snapshot_card(c2, "🌫️", "GHG Inventory", "3.396 GtCO₂e", "2022", "🔵 INVENTORY",
+                  "India BTR-1 total GHG emissions excluding LULUCF. Latest official inventory year is 2022.")
+    snapshot_card(c3, "⚡", "Non-Fossil Capacity", "304.33 GW", "31 Aug 2026", "🟡 LATEST",
+                  "MNRE cumulative non-fossil installed power capacity: renewables including large hydro plus nuclear.")
+    snapshot_card(c4, "⚠️", "Physical Risk", f"{filtered_df['Physical_Risk'].values[0]}/100", str(selected_year), "🟣 MODELLED",
+                  "Dashboard-derived analytical index; this is not an official government risk score.")
+
+st.caption("🟢 Observed  •  🟡 Latest/Projected  •  🔵 Official Inventory  •  🟣 Dashboard-Modelled")
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
     "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🤖 AI Analyzer",
-    "🏢 Company ESG", "📊 IPCC Targets", "📄 Export", "🔍 India vs World Deep Dive"
+    "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive",
+    "🌱 Carbon Intelligence", "📚 Methodology & Sources"
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -636,10 +685,9 @@ with tab5:
                  title="Scope 1 Emissions (Mt CO₂e) — Company Level")
     fig.update_layout(**PLOT_LAYOUT)
     st.plotly_chart(fig, use_container_width=True)
-st.dataframe(fco, use_container_width=True)
-
+    st.dataframe(fco, use_container_width=True)
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 6 — IPCC TARGETS
+# TAB 6 — Climate Targets
 # ─────────────────────────────────────────────────────────────────────────────
 with tab6:
     st.subheader("📊 IPCC AR6 Scenarios & India NDC 2030 Progress")
@@ -939,6 +987,407 @@ with tab8:
     - ND-GAIN Country Index 2025: https://gain.nd.edu/
     - India BUR-4 (Biennial Update Report) 2025 — UNFCCC
     """)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 9 — CARBON INTELLIGENCE
+# Environmental decision-support with a supporting climate-finance lens.
+# Carbon-market methodology references: BEE Indian Carbon Market / CCTS.
+# ─────────────────────────────────────────────────────────────────────────────
+with tab9:
+    st.subheader("🌱 Carbon Intelligence & Climate Finance Lab")
+    st.markdown(
+        "<p style='color:#90c0a0'>Translate an emissions baseline into a mitigation target, "
+        "remaining decarbonisation gap, an indicative carbon-value scenario and environmental "
+        "project pathways. Financial outputs are supporting indicators—not investment advice "
+        "or a carbon-credit eligibility determination.</p>",
+        unsafe_allow_html=True
+    )
+
+    st.info(
+        "🔬 **Environmental-first workflow:** Climate pressure → GHG baseline → emission reduction → "
+        "mitigation gap → project intervention → potential carbon mechanism → environmental co-benefits → climate finance."
+    )
+
+    # ── A. Carbon Reduction Calculator ────────────────────────────────────────
+    st.markdown("### 🧮 A. Carbon Reduction Calculator")
+    a1, a2, a3, a4 = st.columns(4)
+    with a1:
+        baseline_emissions = st.number_input(
+            "Baseline emissions (tCO₂e)", min_value=1.0, value=100000.0,
+            step=1000.0, key="ci_baseline"
+        )
+    with a2:
+        current_emissions = st.number_input(
+            "Current emissions (tCO₂e)", min_value=0.0, value=85000.0,
+            step=1000.0, key="ci_current"
+        )
+    with a3:
+        target_reduction_pct = st.slider(
+            "Reduction target (%)", 0, 100, 25, key="ci_target_pct"
+        )
+    with a4:
+        expected_future_reduction = st.number_input(
+            "Additional expected reduction (tCO₂e)", min_value=0.0,
+            value=5000.0, step=500.0, key="ci_future_reduction"
+        )
+
+    achieved_reduction = max(baseline_emissions - current_emissions, 0.0)
+    achieved_pct = (achieved_reduction / baseline_emissions * 100) if baseline_emissions else 0.0
+    target_reduction = baseline_emissions * target_reduction_pct / 100
+    target_emissions = baseline_emissions - target_reduction
+    remaining_gap = max(target_reduction - achieved_reduction, 0.0)
+    projected_emissions = max(current_emissions - expected_future_reduction, 0.0)
+    projected_reduction = max(baseline_emissions - projected_emissions, 0.0)
+    projected_pct = projected_reduction / baseline_emissions * 100 if baseline_emissions else 0.0
+    projected_gap = max(target_reduction - projected_reduction, 0.0)
+
+    r1, r2, r3, r4 = st.columns(4)
+    r1.metric("Emissions Reduced", f"{achieved_reduction:,.0f} tCO₂e")
+    r2.metric("Reduction Achieved", f"{achieved_pct:.1f}%")
+    r3.metric("Target Emissions", f"{target_emissions:,.0f} tCO₂e")
+    r4.metric("Remaining Gap", f"{remaining_gap:,.0f} tCO₂e")
+
+    progress = min(achieved_reduction / target_reduction, 1.0) if target_reduction > 0 else 1.0
+    st.progress(progress)
+    if target_reduction_pct == 0:
+        st.success("✅ No reduction target has been set in this scenario.")
+    elif remaining_gap <= 0:
+        st.success("✅ **On Track / Target Achieved:** Current emissions meet or exceed the selected reduction target.")
+    elif projected_gap <= 0:
+        st.success(
+            f"🟢 **Projected On Track:** The additional reduction scenario would lower emissions to "
+            f"{projected_emissions:,.0f} tCO₂e ({projected_pct:.1f}% below baseline)."
+        )
+    else:
+        st.warning(
+            f"🟡 **Additional Mitigation Required:** After the expected reduction, an estimated "
+            f"{projected_gap:,.0f} tCO₂e gap would remain against the selected target."
+        )
+
+    # ── B. Carbon Value Scenario ──────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### ♻️ B. Carbon Credit Scenario Simulator")
+    b1, b2 = st.columns([1, 1])
+    with b1:
+        scenario_reduction = st.number_input(
+            "Emission reduction used for scenario (tCO₂e)", min_value=0.0,
+            value=float(round(projected_reduction)), step=500.0, key="ci_credit_reduction"
+        )
+        carbon_price = st.slider(
+            "Illustrative carbon value (₹ per tCO₂e)", 0, 10000, 1000, 100,
+            key="ci_carbon_price"
+        )
+        indicative_carbon_value = scenario_reduction * carbon_price
+        st.metric("Illustrative Carbon Value", f"₹{indicative_carbon_value:,.0f}")
+        st.caption("Scenario value = selected tCO₂e reduction × assumed ₹/tCO₂e. This is not a market-price forecast.")
+
+    with b2:
+        st.markdown("#### What this result means")
+        st.markdown(
+            f"A reduction scenario of **{scenario_reduction:,.0f} tCO₂e** at an assumed value of "
+            f"**₹{carbon_price:,.0f}/tCO₂e** produces an illustrative value of "
+            f"**₹{indicative_carbon_value:,.0f}**. The environmental result and the financial scenario "
+            "are deliberately shown separately."
+        )
+        st.warning(
+            "**Important:** An emission reduction does not automatically become an eligible or issued carbon credit. "
+            "Applicability depends on the relevant methodology, baseline/additionality requirements, monitoring, "
+            "validation/verification, registration and other CCTS requirements."
+        )
+
+    # ── C. Project Explorer ───────────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 🌳 C. Carbon Project Explorer")
+    project_library = {
+        "Grid-connected Renewable Electricity": {
+            "sector": "Energy", "method": "BM EN01.001",
+            "ghg": "Fossil-fuel electricity displacement",
+            "action": "Generate grid-connected electricity from eligible renewable sources.",
+            "benefits": "Lower operational GHG emissions; supports power-sector decarbonisation.",
+            "monitor": "Electricity generation, baseline/grid parameters and applicable project emissions."
+        },
+        "Industrial Energy Efficiency / Fuel Switching": {
+            "sector": "Industries", "method": "BM IN02.001",
+            "ghg": "Fuel and process-energy related emissions",
+            "action": "Improve energy efficiency and/or switch fuels in industrial facilities.",
+            "benefits": "Reduced energy demand and GHG intensity; possible local air-quality co-benefits.",
+            "monitor": "Energy/fuel use, production/activity data, baseline efficiency and project emissions."
+        },
+        "Landfill Methane Recovery": {
+            "sector": "Waste Handling and Disposal", "method": "BM WA03.001",
+            "ghg": "Methane from anaerobic decomposition of solid waste",
+            "action": "Capture landfill methane for controlled recovery/use.",
+            "benefits": "Methane abatement; improved landfill-gas management and potential local environmental benefits.",
+            "monitor": "Gas flow, methane concentration, destruction/use and project/leakage emissions."
+        },
+        "Compressed Bio-gas (CBG)": {
+            "sector": "Waste Handling and Disposal", "method": "BM WA03.003",
+            "ghg": "Organic-waste and displaced fossil-fuel emissions",
+            "action": "Convert eligible organic feedstock into compressed bio-gas.",
+            "benefits": "Waste valorisation, methane management and fossil-fuel substitution potential.",
+            "monitor": "Feedstock, gas production/use, energy inputs, leakage and applicable baseline parameters."
+        },
+        "Improved Rice Cultivation": {
+            "sector": "Agriculture", "method": "BM AG04.002",
+            "ghg": "Methane associated with rice cultivation",
+            "action": "Apply improved rice-management practices covered by the methodology.",
+            "benefits": "Potential methane reduction with agricultural resource-efficiency co-benefits.",
+            "monitor": "Cultivation practices, area, water/management parameters and methodology-specific activity data."
+        },
+        "Livestock & Manure Methane Recovery": {
+            "sector": "Agriculture", "method": "BM AG04.001",
+            "ghg": "Methane from livestock/manure management",
+            "action": "Recover methane from manure-management systems at eligible households/small farms.",
+            "benefits": "Methane mitigation, improved waste handling and potential useful-energy recovery.",
+            "monitor": "Livestock/manure activity, methane recovery, system operation and leakage."
+        },
+        "Afforestation / Reforestation": {
+            "sector": "Forestry", "method": "BM FR05.002",
+            "ghg": "Atmospheric CO₂ through biological sequestration",
+            "action": "Afforestation/reforestation of eligible lands other than wetlands.",
+            "benefits": "Carbon sequestration plus potential soil, habitat and ecosystem co-benefits.",
+            "monitor": "Project boundary, biomass/carbon stocks, leakage, permanence-related parameters and land status."
+        },
+        "Mangrove Restoration / A&R": {
+            "sector": "Forestry", "method": "BM FR05.001",
+            "ghg": "Atmospheric CO₂ through coastal ecosystem sequestration",
+            "action": "Afforestation/reforestation of eligible degraded mangrove habitats.",
+            "benefits": "Carbon sequestration with potential biodiversity, shoreline and ecosystem-resilience co-benefits.",
+            "monitor": "Mangrove area, biomass/carbon stocks, land eligibility, leakage and methodology parameters."
+        },
+        "Biomass Electricity & Heat": {
+            "sector": "Energy", "method": "BM EN01.003",
+            "ghg": "Fossil energy displaced by eligible biomass energy",
+            "action": "Generate electricity and/or heat from eligible biomass under the approved methodology.",
+            "benefits": "Potential fossil-energy displacement and productive biomass-resource use.",
+            "monitor": "Biomass quantity/type, energy generation, fossil inputs, leakage and project emissions."
+        },
+    }
+
+    selected_project = st.selectbox("Select a mitigation project pathway", list(project_library.keys()), key="ci_project")
+    p = project_library[selected_project]
+    p1, p2, p3 = st.columns(3)
+    p1.metric("CCTS Sector", p["sector"])
+    p2.metric("Potential Methodology", p["method"])
+    p3.metric("Project Role", "Mitigation")
+
+    st.markdown(f"**GHG source / pressure:** {p['ghg']}")
+    st.markdown(f"**Mitigation intervention:** {p['action']}")
+    st.markdown(f"**Potential environmental benefits:** {p['benefits']}")
+    st.markdown(f"**Monitoring focus:** {p['monitor']}")
+    st.caption(
+        "Methodology match is an educational pre-screen only. Actual applicability must be checked against the "
+        "latest BEE methodology, eligibility conditions and project-specific evidence."
+    )
+
+    # ── D. Climate Finance Lens ───────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 💰 D. Climate Finance Lens")
+    st.markdown(
+        "This section links an environmental intervention to financing needs without turning the dashboard into an investment tool."
+    )
+
+    f1, f2, f3, f4 = st.columns(4)
+    with f1:
+        project_cost_lakh = st.number_input("Project cost (₹ lakh)", min_value=0.0, value=100.0, step=10.0, key="ci_cost")
+    with f2:
+        grant_pct = st.slider("Grant / subsidy (%)", 0, 100, 10, key="ci_grant")
+    with f3:
+        debt_pct = st.slider("Debt share of post-grant cost (%)", 0, 100, 60, key="ci_debt")
+    with f4:
+        annual_reduction = st.number_input("Expected annual reduction (tCO₂e)", min_value=1.0, value=5000.0, step=500.0, key="ci_annual_red")
+
+    f5, f6 = st.columns(2)
+    with f5:
+        interest_rate = st.slider("Illustrative debt interest rate (%)", 0.0, 20.0, 9.0, 0.5, key="ci_rate")
+    with f6:
+        tenure = st.slider("Illustrative debt tenure (years)", 1, 20, 7, key="ci_tenure")
+
+    project_cost = project_cost_lakh * 100000
+    grant_amount = project_cost * grant_pct / 100
+    post_grant_cost = max(project_cost - grant_amount, 0)
+    debt_amount = post_grant_cost * debt_pct / 100
+    equity_other = max(post_grant_cost - debt_amount, 0)
+    annual_rate = interest_rate / 100
+    if annual_rate > 0:
+        annual_debt_service = debt_amount * (annual_rate * (1 + annual_rate) ** tenure) / (((1 + annual_rate) ** tenure) - 1)
+    else:
+        annual_debt_service = debt_amount / tenure
+    mitigation_cost_intensity = post_grant_cost / (annual_reduction * tenure) if annual_reduction > 0 else 0
+
+    fc1, fc2, fc3, fc4 = st.columns(4)
+    fc1.metric("Grant / Subsidy", f"₹{grant_amount/100000:,.1f} lakh")
+    fc2.metric("Indicative Debt", f"₹{debt_amount/100000:,.1f} lakh")
+    fc3.metric("Equity / Other", f"₹{equity_other/100000:,.1f} lakh")
+    fc4.metric("₹ per tCO₂e*", f"₹{mitigation_cost_intensity:,.0f}")
+    st.caption(
+        f"Illustrative annual debt service: ₹{annual_debt_service/100000:,.2f} lakh. "
+        "*Simple project-cost intensity over the selected tenure; not an abatement-cost study, NPV/IRR calculation or investment recommendation."
+    )
+
+    # ── E. Marginal Abatement Cost Tool ──────────────────────────────────────
+    st.markdown("#### 📊 Marginal Abatement Cost Tool")
+    st.markdown(
+        "Compare the simple cost of achieving a tonne of CO₂e reduction. This is an educational "
+        "screening metric, not a full marginal abatement cost curve or investment appraisal."
+    )
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        mac_project_cost_lakh = st.number_input(
+            "Mitigation project cost (₹ lakh)", min_value=0.0, value=float(project_cost_lakh),
+            step=10.0, key="ci_mac_cost"
+        )
+    with m2:
+        mac_annual_reduction = st.number_input(
+            "Annual avoided/reduced emissions (tCO₂e)", min_value=1.0, value=float(annual_reduction),
+            step=100.0, key="ci_mac_reduction"
+        )
+    with m3:
+        mac_life = st.slider("Expected mitigation life (years)", 1, 30, 10, key="ci_mac_life")
+
+    mac_total_reduction = mac_annual_reduction * mac_life
+    mac_cost_rupees = mac_project_cost_lakh * 100000
+    simple_abatement_cost = mac_cost_rupees / mac_total_reduction if mac_total_reduction > 0 else 0
+    mac1, mac2, mac3 = st.columns(3)
+    mac1.metric("Lifetime Reduction", f"{mac_total_reduction:,.0f} tCO₂e")
+    mac2.metric("Simple Abatement Cost", f"₹{simple_abatement_cost:,.0f}/tCO₂e")
+    mac3.metric("Project Life", f"{mac_life} years")
+    st.caption(
+        "Simple abatement cost = project cost ÷ estimated lifetime emission reduction. "
+        "It excludes operating costs, savings, discounting, financing effects and carbon revenues."
+    )
+
+    # ── F. Climate Finance Pre-Screener ───────────────────────────────────────
+    st.markdown("#### 🌿 Climate Finance Relevance Pre-Screener")
+    s1, s2 = st.columns(2)
+    with s1:
+        q_mitigation = st.checkbox("Project has a clear climate-mitigation objective", value=True, key="ci_q1")
+        q_measurable = st.checkbox("GHG/environmental benefit can be measured and monitored", value=True, key="ci_q2")
+    with s2:
+        q_harm = st.checkbox("Potential significant environmental/social harms have been considered", value=False, key="ci_q3")
+        q_transition = st.checkbox("Activity supports transition/resilience rather than locking in higher emissions", value=True, key="ci_q4")
+
+    screen_score = sum([q_mitigation, q_measurable, q_harm, q_transition])
+    if screen_score == 4:
+        st.success("🟢 **Strong preliminary climate-finance relevance** — proceed to detailed taxonomy, safeguards and financing assessment.")
+    elif screen_score >= 2:
+        st.warning("🟡 **Potential climate-finance relevance** — additional evidence, safeguards or measurable criteria are needed.")
+    else:
+        st.error("🔴 **Insufficient information at pre-screen stage** — strengthen the climate objective, measurement plan and safeguards before assessment.")
+
+    st.caption(
+        "Educational pre-screen only. It does not certify taxonomy alignment, green-bond eligibility, bankability, carbon-credit eligibility or regulatory approval."
+    )
+
+    # ── G. Environmental Impact Translator ────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 🌍 G. Environmental Impact Translator")
+    impact_left, impact_right = st.columns([1.2, 1])
+    with impact_left:
+        if target_reduction_pct == 0:
+            status_text = "No reduction target selected"
+        elif remaining_gap <= 0:
+            status_text = "Target achieved on current emissions"
+        elif projected_gap <= 0:
+            status_text = "Projected on track after planned mitigation"
+        else:
+            status_text = f"Projected mitigation gap: {projected_gap:,.0f} tCO₂e"
+
+        st.markdown(f"""
+        <div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;
+                    border-radius:12px;padding:20px;line-height:1.75'>
+          <b style='color:#4dff91'>Baseline:</b> {baseline_emissions:,.0f} tCO₂e<br>
+          <b style='color:#4dff91'>Current reduction:</b> {achieved_reduction:,.0f} tCO₂e ({achieved_pct:.1f}%)<br>
+          <b style='color:#4dff91'>Selected target:</b> {target_reduction_pct}% reduction<br>
+          <b style='color:#4dff91'>Projected emissions:</b> {projected_emissions:,.0f} tCO₂e<br>
+          <b style='color:#4dff91'>Target status:</b> {status_text}<br>
+          <b style='color:#4dff91'>Selected pathway:</b> {selected_project}<br>
+          <b style='color:#4dff91'>Potential methodology:</b> {p['method']}
+        </div>
+        """, unsafe_allow_html=True)
+
+    with impact_right:
+        st.markdown("#### Decision interpretation")
+        st.markdown(
+            "The dashboard first quantifies the **environmental mitigation gap**. Carbon-market and finance "
+            "outputs are then used only to explore how a mitigation project might be supported, monitored and valued. "
+            "This keeps environmental performance—not financial return—as the primary decision variable."
+        )
+
+    st.markdown("---")
+    st.markdown("### 🔗 Official reference framework")
+    st.markdown(
+        "- **BEE Indian Carbon Market / CCTS:** compliance and voluntary offset mechanisms.\n"
+        "- **BEE Offset Methodologies:** approved project methodologies across energy, industry, waste, agriculture and forestry.\n"
+        "- **India Climate Finance Taxonomy framework:** useful for understanding mitigation, adaptation, transition and anti-greenwashing principles."
+    )
+    st.warning(
+        "⚠️ **Academic-use note:** Carbon prices, financing assumptions and project outputs in this tab are user-defined scenarios. "
+        "They are not live market quotations, investment advice, certification, verification or an assurance of Carbon Credit Certificate issuance."
+    )
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 10 — METHODOLOGY & SOURCES
+# ─────────────────────────────────────────────────────────────────────────────
+with tab10:
+    st.subheader("📚 Methodology, Data Status & Sources")
+    st.markdown(
+        "This dashboard separates official observations and inventories from latest/provisional "
+        "indicators, policy targets and dashboard-modelled analytical indices. This distinction is "
+        "important because environmental datasets are published at different frequencies and reference periods."
+    )
+
+    methodology_df = pd.DataFrame({
+        "Data class": ["OBSERVED", "LATEST / PROJECTED", "INVENTORY", "MODELLED", "TARGET"],
+        "Meaning": [
+            "Completed historical observation for a stated reference period.",
+            "Latest available, provisional, YTD or projected indicator; not treated as a completed annual observation.",
+            "Official greenhouse-gas inventory for the latest published inventory year.",
+            "Dashboard-derived comparative indicator used for analytical interpretation; not an official agency score.",
+            "Policy, climate or scenario benchmark used for progress comparison."
+        ],
+        "Dashboard example": [
+            "2025 global/India temperature",
+            "Latest energy-capacity or emissions estimate",
+            "India official GHG inventory",
+            "Physical and transition risk indices",
+            "Emission-reduction / climate targets"
+        ]
+    })
+    st.dataframe(methodology_df, use_container_width=True, hide_index=True)
+
+    st.markdown("### 🧭 How to interpret the risk scores")
+    st.info(
+        "Physical Risk and Transition Risk values shown as 0–100 scores are dashboard-modelled comparative indices. "
+        "They are used to support relative interpretation across locations/sectors and should not be read as direct "
+        "IPCC, ND-GAIN, NDMA or government-issued scores unless explicitly stated otherwise."
+    )
+
+    st.markdown("### 🌱 Carbon & climate-finance tools")
+    st.markdown(
+        "The Carbon Intelligence tools are scenario-based decision-support calculations. Emission reductions, "
+        "carbon values, financing assumptions, abatement costs and pre-screening outputs are illustrative. "
+        "They do not establish carbon-credit eligibility, taxonomy alignment, regulatory approval, project bankability or investment suitability."
+    )
+
+    st.markdown("### 🔗 Primary reference organisations")
+    st.markdown(
+        "- **WMO** — global climate observations and annual climate reporting.\n"
+        "- **IMD** — India temperature and climate observations.\n"
+        "- **UNFCCC / MoEFCC** — India's national GHG inventory and climate reporting.\n"
+        "- **MNRE / CEA** — renewable and non-fossil electricity-capacity statistics.\n"
+        "- **IEA / Global Carbon Project** — global energy and emissions indicators.\n"
+        "- **BEE** — Indian Carbon Market / CCTS procedures and approved offset methodologies.\n"
+        "- **IPCC** — climate-science assessment and scenario context.\n"
+        "- **SEBI** — sustainability-reporting framework for listed entities."
+    )
+
+    st.markdown("### ⚠️ Key limitations")
+    st.warning(
+        "Reference years differ across indicators; 2026 is the dashboard's latest-data year, not a claim that every "
+        "indicator is a completed 2026 observation. Company ESG and some comparative risk datasets are analytical/illustrative "
+        "and should be replaced with traceable licensed or primary-source datasets for production-grade use."
+    )
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
