@@ -6,7 +6,7 @@ import json
 import streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Climate Risk & ESG Intelligence Dashboard",
+    page_title="Climate Risk, ESG & Carbon Intelligence Dashboard",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -123,7 +123,20 @@ visit_count = st.session_state["total_visits"]
 # NOTE: To keep data live, replace these DataFrames with API calls to
 #       GCP (globalcarbonproject.org), IEA Data Explorer, or WMO climate APIs.
 # ══════════════════════════════════════════════════════════════════════════════
-
+# ── DATA CLASSIFICATION ───────────────────────────────────────────────────────
+# Historical observations, latest available indicators, modelled dashboard
+# indices and policy targets are kept conceptually separate.
+#
+# IMPORTANT:
+# 2026 is the dashboard's latest-data year. It does NOT imply that every
+# indicator represents a completed full-year 2026 observation.
+#
+# Data status used in this dashboard:
+# OBSERVED   = completed historical observation
+# LATEST     = latest available / YTD / provisional value
+# INVENTORY  = latest official GHG inventory year
+# MODELLED   = dashboard-derived analytical indicator
+# TARGET     = policy or climate target
 GLOBAL_DATA = pd.DataFrame({
     "Year":             [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
     # IEA Global Energy Review 2026 / GCP 2026 preliminary
@@ -248,7 +261,7 @@ else:
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("# 🌍 Climate Risk & ESG Intelligence Dashboard")
+st.markdown("# 🌍 Climate Risk, ESG & Carbon Intelligence Dashboard")
 st.markdown(
     f"<p style='color:#90c0a0;font-size:1rem;margin-top:-10px'>"
     f"Sustainable Finance · ESG Analytics · Climate Risk Modelling · "
@@ -305,7 +318,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
     "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🤖 AI Analyzer",
-    "🏢 Company ESG", "📊 IPCC Targets", "📄 Export", "🔍 India vs World Deep Dive"
+    "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive"
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -649,7 +662,7 @@ with tab5:
 st.dataframe(fco, use_container_width=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 6 — IPCC TARGETS
+# TAB 6 — Climate Targets
 # ─────────────────────────────────────────────────────────────────────────────
 with tab6:
     st.subheader("📊 IPCC AR6 Scenarios & India NDC 2030 Progress")
