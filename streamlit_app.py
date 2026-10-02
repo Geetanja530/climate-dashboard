@@ -342,7 +342,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-    "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🤖 AI Analyzer",
+    "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🇮🇳 India Carbon Market",
     "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive",
     "🌱 Carbon Intelligence", "📚 Methodology & Sources"
 ])
@@ -594,68 +594,92 @@ with tab3:
                 </div>""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 4 — AI ANALYZER
+# TAB 4 — INDIA CARBON MARKET & CCTS TRACKER
 # ─────────────────────────────────────────────────────────────────────────────
 with tab4:
-    st.subheader("🤖 AI Climate Risk Analyzer")
-    company_input = st.text_input("🏢 Company / Sector", placeholder="e.g. Tata Steel, Microsoft, Banking sector...")
-    if st.button("🔍 Analyze", use_container_width=True):
-        if company_input:
-            with st.spinner(f"Analyzing climate risk for **{company_input}**..."):
-                try:
-                    import urllib.request, ssl
-                    ctx_note = "India using MoEF SoE 2025 and India NDC 2022" if not is_global else "global context using IPCC AR6 and IEA 2025"
-                    prompt = f"""You are a climate risk and ESG analyst (data up to May 2026). Analyze climate risk for: {company_input}
-Use {ctx_note}. Reference 2025-2026 data where available.
+    st.subheader("🇮🇳 India Carbon Market & CCTS Tracker")
+    st.markdown("""<p style='color:#90c0a0;font-size:0.92rem;margin-top:-8px;line-height:1.6;'>
+    Track the development of India's Carbon Credit Trading Scheme (CCTS), understand the compliance and offset mechanisms,
+    and explore how greenhouse-gas performance can translate into carbon-credit obligations or opportunities.
+    </p>""", unsafe_allow_html=True)
 
-**ESG Score Estimate:** (out of 100)
-**Physical Risk Level:** (Low/Medium/High/Critical)
-**Transition Risk Level:** (Low/Medium/High/Critical)
-**Key Climate Risks:** (3 specific, quantified risks)
-**ESG Strengths:** (2 strengths)
-**Regulatory Context:** (IPCC 1.5°C pathway / India NDC / EU CBAM 2026 / SEBI BRSR Core FY2025 as applicable)
-**Recommendations:** (3 actions with timelines)
-**Overall Risk Rating:** (1-10)"""
+    st.markdown("### 📊 Indian Carbon Market — At a Glance")
+    st.caption("Policy and implementation indicators based on Government of India / Bureau of Energy Efficiency carbon-market updates.")
+    c1, c2, c3, c4 = st.columns(4)
+    carbon_cards = [
+        (c1,"🏭","490","Obligated Entities","Entities covered by notified GHG emission-intensity targets across seven transitioned industrial sectors."),
+        (c2,"🏗️","7","Compliance Sectors","Industrial sectors for which GHG emission-intensity targets had been notified under the CCTS framework."),
+        (c3,"📑","9","Offset Methodologies","Methodologies reported as notified for eligible projects under India's carbon-market offset mechanism."),
+        (c4,"🌱","40+","Registered Entities","Entities reported as submitting projects through the Indian Carbon Market framework."),
+    ]
+    for col, icon, value, title, description in carbon_cards:
+        col.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;border-radius:12px;padding:18px;min-height:185px;box-shadow:0 4px 20px rgba(0,200,80,0.08);'>
+        <div style='font-size:1.4rem'>{icon}</div><div style='color:#4dff91;font-size:1.8rem;font-weight:700;margin-top:5px'>{value}</div>
+        <div style='color:#fff;font-size:.86rem;font-weight:600;margin-top:4px'>{title}</div><div style='color:#70a080;font-size:.72rem;margin-top:8px;line-height:1.4'>{description}</div></div>""", unsafe_allow_html=True)
+    st.caption("ℹ️ Figures describe reported CCTS implementation progress and should be read with their respective government reference dates.")
+    st.markdown("---")
 
-                    payload = json.dumps({
-                        "model": "claude-sonnet-4-20250514",
-                        "max_tokens": 1000,
-                        "messages": [{"role":"user","content":prompt}]
-                    }).encode("utf-8")
-                    req = urllib.request.Request(
-                        "https://api.anthropic.com/v1/messages", data=payload,
-                        headers={"Content-Type":"application/json"}, method="POST"
-                    )
-                    with urllib.request.urlopen(req, context=ssl.create_default_context()) as resp:
-                        result = json.loads(resp.read().decode())
-                        ai_response = result["content"][0]["text"]
+    st.markdown("### 🔄 How India's Carbon Credit Trading Scheme Works")
+    st.markdown("<p style='color:#90c0a0;font-size:.88rem'>The compliance mechanism is based on greenhouse-gas emission intensity. An obligated entity's performance is assessed against its notified target. Performance relative to that target determines whether Carbon Credit Certificates may be issued or whether certificates need to be surrendered.</p>", unsafe_allow_html=True)
+    steps=[("🏭","Obligated Entity","Covered industrial facility"),("🌫️","Measure GHG Intensity","Determine actual performance"),("🎯","Compare with Target","Government-notified GEI target"),("🪙","Carbon Credit Outcome","Issue or surrender CCCs")]
+    cols=st.columns(4)
+    for col,(icon,title,note) in zip(cols,steps):
+        col.markdown(f"""<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:18px;text-align:center;min-height:130px'><div style='font-size:1.5rem'>{icon}</div><b style='color:#4dff91'>{title}</b><div style='color:#90c0a0;font-size:.72rem;margin-top:6px'>{note}</div></div>""",unsafe_allow_html=True)
+    st.markdown("<br>",unsafe_allow_html=True)
+    a,b=st.columns(2)
+    a.success("✅ **Better than Target** — Lower GHG intensity than the applicable target can result in potential CCC issuance, subject to CCTS rules.")
+    b.warning("⚠️ **Target Not Achieved** — An obligated entity may need to acquire/surrender CCCs under the applicable compliance framework.")
+    st.markdown("---")
 
-                    st.success("✅ Analysis Complete!")
-                    st.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);
-                        border:1px solid #2a6a3a;border-radius:12px;padding:24px;color:#e0f0e0;line-height:1.7'>
-                        {ai_response.replace(chr(10),'<br>')}</div>""", unsafe_allow_html=True)
-                except Exception:
-                    st.success("✅ Analysis (demo mode)")
-                    st.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);
-                        border:1px solid #2a6a3a;border-radius:12px;padding:24px;color:#e0f0e0'>
-                        <b style='color:#4dff91'>ESG Score:</b> 68/100<br><br>
-                        <b style='color:#4dff91'>Physical Risk:</b> High &nbsp;|&nbsp;
-                        <b style='color:#4dff91'>Transition Risk:</b> High<br><br>
-                        <b style='color:#4dff91'>Key Risks for {company_input}:</b><br>
-                        • Carbon pricing exposure (India CCTS 2025 + EU CBAM now effective Jan 2026)<br>
-                        • Supply chain disruption — IPCC AR6: India high vulnerability region<br>
-                        • Stranded assets risk aligned with IEA Net Zero 2050 scenario<br><br>
-                        <b style='color:#4dff91'>Regulatory Context:</b><br>
-                        • India NDC 2022: 45% emissions intensity cut by 2030 vs 2005<br>
-                        • SEBI BRSR Core mandatory for top 150 listed companies (FY2025)<br>
-                        • EU CBAM effective January 2026 — impacts Indian steel/cement exporters<br><br>
-                        <b style='color:#4dff91'>Recommendations:</b><br>
-                        • Set SBTi targets aligned with 1.5°C pathway by 2026<br>
-                        • Raise renewable procurement to 60%+ by 2028 (MNRE target alignment)<br>
-                        • Disclose Scope 3 emissions under BRSR Core framework<br><br>
-                        <b style='color:#4dff91'>Overall Risk Rating:</b> 6.5/10</div>""", unsafe_allow_html=True)
-        else:
-            st.warning("Please enter a company or sector name.")
+    st.markdown("### 🏭 CCTS Compliance Sector Tracker")
+    ccts_sectors=pd.DataFrame({
+        "Sector":["Aluminium","Cement","Chlor-Alkali","Pulp & Paper","Petroleum Refinery","Petrochemicals","Textiles"],
+        "Category":["Heavy Industry","Heavy Industry","Chemicals","Manufacturing","Energy","Chemicals","Manufacturing"],
+        "Primary Carbon Challenge":["Electricity and process emissions","Clinker and process emissions","Electricity-intensive production","Energy, heat and processing","Fuel processing and refining","Feedstock and process emissions","Heat, electricity and processing"]})
+    icons={"Aluminium":"🔩","Cement":"🏗️","Chlor-Alkali":"🧪","Pulp & Paper":"📄","Petroleum Refinery":"🛢️","Petrochemicals":"⚗️","Textiles":"🧵"}
+    sector_cols=st.columns(4)
+    for idx,row in ccts_sectors.iterrows():
+        sector_cols[idx%4].markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;border-radius:10px;padding:15px;margin-bottom:12px;min-height:145px'><div style='font-size:1.4rem'>{icons[row['Sector']]}</div><div style='color:#4dff91;font-weight:700;margin-top:5px'>{row['Sector']}</div><div style='color:#90c0a0;font-size:.7rem'>{row['Category']}</div><div style='color:#c0e0c0;font-size:.72rem;margin-top:8px;line-height:1.35'>{row['Primary Carbon Challenge']}</div></div>""",unsafe_allow_html=True)
+    st.markdown("---")
+
+    st.markdown("### ⚖️ Two Routes Inside the Indian Carbon Market")
+    compliance_col,offset_col=st.columns(2)
+    compliance_col.markdown("""<div style='background:linear-gradient(135deg,#0d3a1a,#102d20);border:1px solid #2a6a3a;border-radius:12px;padding:20px;min-height:260px'><div style='color:#4dff91;font-size:1.15rem;font-weight:700'>🏭 Compliance Mechanism</div><p style='color:#c0e0c0;font-size:.84rem;line-height:1.6'>Designed for obligated entities in notified energy-intensive sectors. Entities receive greenhouse-gas emission-intensity targets and actual performance is assessed against those targets.</p><div style='color:#90c0a0;font-size:.8rem;line-height:1.8'>🎯 Government-notified GEI targets<br>📊 Performance-based assessment<br>🪙 Carbon Credit Certificates<br>🏭 Obligated industrial entities</div></div>""",unsafe_allow_html=True)
+    offset_col.markdown("""<div style='background:linear-gradient(135deg,#0d3030,#0d3a1a);border:1px solid #2a6a5a;border-radius:12px;padding:20px;min-height:260px'><div style='color:#4dff91;font-size:1.15rem;font-weight:700'>🌱 Offset Mechanism</div><p style='color:#c0e0c0;font-size:.84rem;line-height:1.6'>Provides a project-based route through which eligible non-obligated entities can register activities that reduce, avoid or remove greenhouse-gas emissions under approved methodologies.</p><div style='color:#90c0a0;font-size:.8rem;line-height:1.8'>🌳 Project-based activities<br>📐 Approved methodologies<br>🔍 Validation and verification<br>🪙 Potential Carbon Credit Certificates</div></div>""",unsafe_allow_html=True)
+    st.markdown("---")
+
+    st.markdown("### 🌱 Carbon Credit Project Opportunity Map")
+    offset_areas=[("⚡","Renewable / Energy","Clean-energy and efficiency activities"),("🏭","Industrial Processes","Lower-emission industrial processes"),("♻️","Waste Management","Methane capture and waste treatment"),("🌾","Agriculture","Emission-reduction agricultural practices"),("🌳","Forestry","Afforestation and eligible removals"),("🚚","Transport","Low-carbon mobility activities"),("💨","Fugitive Emissions","Methane and leakage reduction"),("🌍","Carbon Removal / CCUS","Eligible capture/removal activities")]
+    oc=st.columns(4)
+    for idx,(icon,title,ex) in enumerate(offset_areas):
+        oc[idx%4].markdown(f"""<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:16px;margin-bottom:12px;min-height:130px'><div style='font-size:1.5rem'>{icon}</div><div style='color:#4dff91;font-weight:700;font-size:.88rem;margin-top:5px'>{title}</div><div style='color:#90c0a0;font-size:.71rem;margin-top:7px;line-height:1.4'>{ex}</div></div>""",unsafe_allow_html=True)
+    st.markdown("---")
+
+    st.markdown("### 🔄 India's Industrial Transition: PAT → CCTS")
+    st.markdown("<p style='color:#90c0a0;font-size:.88rem'>India's carbon-market development builds on its earlier industrial energy-efficiency architecture. The transition toward CCTS shifts the focus toward greenhouse-gas emission intensity and tradable Carbon Credit Certificates.</p>",unsafe_allow_html=True)
+    pat=[("⚡","PAT Scheme","Industrial energy efficiency"),("🔄","Transition","Carbon-market architecture"),("🌫️","GHG Intensity","Emission-intensity targets"),("🪙","CCTS","Carbon Credit Certificates")]
+    pc=st.columns(4)
+    for col,(icon,title,note) in zip(pc,pat):
+        col.markdown(f"""<div style='text-align:center;background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:16px;min-height:120px'><div style='font-size:1.8rem'>{icon}</div><b style='color:#4dff91'>{title}</b><div style='color:#90c0a0;font-size:.72rem;margin-top:5px'>{note}</div></div>""",unsafe_allow_html=True)
+    st.markdown("---")
+
+    st.markdown("### 🌏 Domestic Carbon Markets & International Cooperation")
+    st.info("🇮🇳 India's carbon-market development also sits within the broader Paris Agreement framework. Article 6 provides routes for voluntary international cooperation between countries in pursuing climate targets.")
+    intl=["🌱 Mitigation Project","📏 Measurement","🔍 Verification","🪙 Carbon Credit","🌏 Carbon Market"]
+    ic=st.columns(5)
+    for col,label in zip(ic,intl):
+        col.markdown(f"<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:8px;padding:14px;text-align:center;min-height:72px;color:#c0e0c0'>{label}</div>",unsafe_allow_html=True)
+    st.markdown("---")
+
+    st.markdown("### 📚 Government & Institutional References")
+    st.markdown("""
+    - **Bureau of Energy Efficiency (BEE)** — Carbon Credit Trading Scheme / Indian Carbon Market
+    - **Ministry of Power, Government of India** — CCTS notifications and compliance mechanism
+    - **Press Information Bureau (PIB)** — Indian Carbon Market implementation updates
+    - **Ministry of Environment, Forest and Climate Change (MoEFCC)** — India's climate commitments and Article 6 framework
+    - **UNFCCC / Paris Agreement** — International carbon-market cooperation under Article 6
+    """)
+    st.info("📌 Research Note: CCTS rules, obligated entities, methodologies, targets and project registrations can change as India's carbon market develops. Dashboard indicators should therefore be read with their respective notification/reference dates.")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 5 — COMPANY ESG
