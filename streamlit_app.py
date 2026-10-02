@@ -604,12 +604,14 @@ with tab4:
         "scenario outputs are analytical illustrations unless explicitly sourced."
     )
 
-    # ── Executive ESG brief ───────────────────────────────────────────────────
-    st.markdown("### 🧭 Executive ESG Brief")
+    # ── Executive corporate snapshot ──────────────────────────────────────────
+    st.markdown("### 🧭 Corporate Carbon Snapshot")
+    st.caption("Select a sector to see its key transition exposure, emissions hotspot and management response in one concise view.")
+
     case_sector = st.selectbox(
-        "Select corporate case-study sector",
+        "Sector",
         ["Cement", "Aluminium", "Petroleum Refinery", "Petrochemicals", "Textiles", "Pulp & Paper", "Chlor-Alkali"],
-        help="Use this as an analytical sector case study. Replace illustrative inputs with a real company's verified disclosures for your dissertation case study."
+        help="Sector-level analytical view. Exposure labels are modelled indicators, not official government risk ratings."
     )
 
     sector_data = {
@@ -622,35 +624,44 @@ with tab4:
         "Chlor-Alkali": {"exposure":"High","hotspot":"Electricity-intensive electrolysis","risk":"High electricity-carbon-intensity exposure","response":"Renewable electricity and efficient membrane technology","material":"Energy & GHG"},
     }
     sd = sector_data[case_sector]
-    # Compact executive cards — fewer columns keep labels readable on normal screens
-    e1,e2,e3 = st.columns(3)
-    e1.metric("Carbon Market Exposure ⓘ", sd["exposure"], help="Modelled qualitative sector assessment based on transition and carbon-market exposure; not an official CCTS risk rating or company rating.")
-    e2.metric("Key Transition Issue ⓘ", sd["material"], help="Illustrative material transition issue for the selected sector. Replace with company-specific evidence in a formal case study.")
-    e3.metric("CCTS Mechanism ⓘ", "Compliance", help="The selected sector is assessed here from the CCTS compliance perspective.")
 
-    e4,e5 = st.columns(2)
-    e4.metric("GHG Metric ⓘ", "GEI", help="GEI = Greenhouse Gas Emission Intensity, expressed relative to the applicable product/output basis.")
-    e5.metric("Analysis Type ⓘ", "Scenario", help="This case-study layer uses analytical assumptions unless a sourced company value is explicitly supplied.")
+    # Compact status strip: avoids oversized metric cards and truncated headings.
+    st.markdown(f"""
+    <div style='background:linear-gradient(135deg,rgba(13,50,31,.92),rgba(10,42,39,.92));border:1px solid rgba(77,255,145,.30);border-radius:14px;padding:16px 20px;margin:8px 0 16px;'>
+      <div style='display:flex;flex-wrap:wrap;gap:12px 34px;align-items:center;'>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CARBON EXPOSURE</span><br><b style='color:#4dff91;font-size:1.15rem'>{sd['exposure']}</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>KEY ISSUE</span><br><b style='color:#f2fff5;font-size:1.05rem'>{sd['material']}</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CCTS LENS</span><br><b style='color:#f2fff5;font-size:1.05rem'>Compliance</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CORE METRIC</span><br><b style='color:#f2fff5;font-size:1.05rem'>GEI</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>VIEW</span><br><b style='color:#f2fff5;font-size:1.05rem'>Scenario</b></div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    c1,c2 = st.columns(2)
-    with c1:
+    st.markdown("#### 🔍 What matters for this sector?")
+    p1,p2,p3 = st.columns(3)
+    with p1:
         st.markdown(f"""
-        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:18px;min-height:185px'>
-          <b style='color:#4dff91'>🌫️ Emission & Transition Profile</b>
-          <p style='color:#9dd5ad;font-size:.78rem;margin:14px 0 4px'>PRIMARY HOTSPOT</p>
-          <p style='color:#f2fff5'>{sd['hotspot']}</p>
-          <p style='color:#9dd5ad;font-size:.78rem;margin:14px 0 4px'>RISK LENS</p>
-          <p style='color:#f2fff5'>{sd['risk']}</p>
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#4dff91;font-weight:700;margin-bottom:12px'>🌫️ Emissions Hotspot</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['hotspot']}</div>
         </div>""", unsafe_allow_html=True)
-    with c2:
+    with p2:
         st.markdown(f"""
-        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:18px;min-height:185px'>
-          <b style='color:#4dff91'>💼 Management Lens</b>
-          <p style='color:#9dd5ad;font-size:.78rem;margin:14px 0 4px'>FINANCIAL CHANNEL</p>
-          <p style='color:#f2fff5'>Potential carbon-compliance cost and transition capex.</p>
-          <p style='color:#9dd5ad;font-size:.78rem;margin:14px 0 4px'>POSSIBLE RESPONSE</p>
-          <p style='color:#f2fff5'>{sd['response']}</p>
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#4dff91;font-weight:700;margin-bottom:12px'>⚠️ Transition Risk</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['risk']}</div>
+          <div style='color:#8fcda4;font-size:.80rem;margin-top:13px'>Financial channel</div>
+          <div style='color:#f2fff5;margin-top:3px'>Potential compliance cost and transition capex</div>
         </div>""", unsafe_allow_html=True)
+    with p3:
+        st.markdown(f"""
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#4dff91;font-weight:700;margin-bottom:12px'>🎯 Management Response</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['response']}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.caption("ⓘ Exposure and management-response labels are analytical sector scenarios. Use verified company disclosures and applicable CCTS targets for company-specific assessment.")
 
     st.markdown("---")
 
@@ -826,14 +837,23 @@ with tab4:
 
     st.markdown("---")
 
-    # ── Data confidence / methodology ─────────────────────────────────────────
-    st.markdown("### 🔎 Data Confidence & Research Discipline")
-    q1,q2,q3,q4,q5 = st.columns(5)
-    q1.metric("Reported", "Company", help="Values taken directly from a company annual, sustainability or BRSR disclosure.")
-    q2.metric("Government", "Official", help="Values sourced from government/regulatory publications such as BEE, Ministry of Power or PIB.")
-    q3.metric("Calculated", "Derived", help="Values calculated transparently from sourced inputs.")
-    q4.metric("Modelled", "Analytical", help="Outputs produced by an analytical model or scenario.")
-    q5.metric("Assumption", "User Input", help="User-defined values used to test sensitivity; not observed facts or forecasts.")
+    # ── Data transparency ─────────────────────────────────────────────────────
+    st.markdown("### 🔎 Data Transparency")
+    st.caption("A compact guide to how information is classified across the dashboard.")
+    st.markdown("""
+    <div style='background:linear-gradient(135deg,rgba(13,49,31,.88),rgba(11,40,38,.88));border:1px solid rgba(67,255,136,.28);border-radius:14px;padding:17px 20px;margin-top:8px;'>
+      <div style='display:flex;flex-wrap:wrap;gap:12px 26px;align-items:center;'>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Reported</b> <span style='color:#8da99a;font-size:.82rem'>Company disclosures</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Government</b> <span style='color:#8da99a;font-size:.82rem'>Official sources</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Calculated</b> <span style='color:#8da99a;font-size:.82rem'>Derived metrics</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Modelled</b> <span style='color:#8da99a;font-size:.82rem'>Analytical outputs</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Assumption</b> <span style='color:#8da99a;font-size:.82rem'>User scenarios</span></div>
+      </div>
+      <div style='border-top:1px solid rgba(255,255,255,.08);margin-top:14px;padding-top:10px;color:#91aa9b;font-size:.80rem'>
+        ⓘ Tooltips and captions identify definitions, assumptions and interpretation where relevant.
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
