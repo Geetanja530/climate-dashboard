@@ -6,7 +6,7 @@ import json
 import streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Climate Risk, ESG & Carbon Intelligence Dashboard",
+    page_title="Corporate ESG, Climate Risk & Carbon Intelligence Dashboard",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -261,7 +261,7 @@ else:
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("# 🌍 Climate Risk, ESG & Carbon Intelligence Dashboard")
+st.markdown("# 🌍 Corporate ESG, Climate Risk & Carbon Intelligence Dashboard")
 st.markdown(
     f"<p style='color:#90c0a0;font-size:1rem;margin-top:-10px'>"
     f"Sustainable Finance · ESG Analytics · Climate Risk Modelling · "
@@ -342,7 +342,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-    "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🇮🇳 India Carbon Market",
+    "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "💼 Corporate ESG & CCTS",
     "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive",
     "🌱 Carbon Intelligence", "📚 Methodology & Sources"
 ])
@@ -594,92 +594,192 @@ with tab3:
                 </div>""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 4 — INDIA CARBON MARKET & CCTS TRACKER
+# TAB 4 — CORPORATE ESG & CCTS ANALYST LAB
 # ─────────────────────────────────────────────────────────────────────────────
 with tab4:
-    st.subheader("🇮🇳 India Carbon Market & CCTS Tracker")
-    st.markdown("""<p style='color:#90c0a0;font-size:0.92rem;margin-top:-8px;line-height:1.6;'>
-    Track the development of India's Carbon Credit Trading Scheme (CCTS), understand the compliance and offset mechanisms,
-    and explore how greenhouse-gas performance can translate into carbon-credit obligations or opportunities.
-    </p>""", unsafe_allow_html=True)
+    st.subheader("💼 Corporate ESG & CCTS Analyst Lab")
+    st.caption("A corporate ESG workflow connecting Indian carbon-market regulation, materiality, disclosure readiness and financial impact. Government figures are reference-dated; company/scenario inputs below are analytical illustrations unless explicitly sourced.")
 
-    st.markdown("### 📊 Indian Carbon Market — At a Glance")
-    st.caption("Policy and implementation indicators based on Government of India / Bureau of Energy Efficiency carbon-market updates.")
-    c1, c2, c3, c4 = st.columns(4)
-    carbon_cards = [
-        (c1,"🏭","490","Obligated Entities","Entities covered by notified GHG emission-intensity targets across seven transitioned industrial sectors."),
-        (c2,"🏗️","7","Compliance Sectors","Industrial sectors for which GHG emission-intensity targets had been notified under the CCTS framework."),
-        (c3,"📑","9","Offset Methodologies","Methodologies reported as notified for eligible projects under India's carbon-market offset mechanism."),
-        (c4,"🌱","40+","Registered Entities","Entities reported as submitting projects through the Indian Carbon Market framework."),
-    ]
-    for col, icon, value, title, description in carbon_cards:
-        col.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;border-radius:12px;padding:18px;min-height:185px;box-shadow:0 4px 20px rgba(0,200,80,0.08);'>
-        <div style='font-size:1.4rem'>{icon}</div><div style='color:#4dff91;font-size:1.8rem;font-weight:700;margin-top:5px'>{value}</div>
-        <div style='color:#fff;font-size:.86rem;font-weight:600;margin-top:4px'>{title}</div><div style='color:#70a080;font-size:.72rem;margin-top:8px;line-height:1.4'>{description}</div></div>""", unsafe_allow_html=True)
-    st.caption("ℹ️ Figures describe reported CCTS implementation progress and should be read with their respective government reference dates.")
+    # 1) CCTS IMPLEMENTATION TRACKER
+    st.markdown("### 🇮🇳 CCTS Implementation Tracker")
+    m1,m2,m3,m4 = st.columns(4)
+    m1.metric("Obligated Entities ⓘ", "490", help="Obligated Entities are notified industrial entities covered by the CCTS compliance mechanism and required to meet applicable GHG Emission Intensity (GEI) targets.")
+    m2.metric("Compliance Sectors ⓘ", "7", help="Seven industrial sectors had notified GEI targets in the government implementation updates used for this dashboard.")
+    m3.metric("Offset Methodologies ⓘ", "9", help="Approved methodologies provide rules for quantifying eligible emission reductions/removals under the CCTS offset mechanism.")
+    m4.metric("Market Mechanisms ⓘ", "2", help="CCTS has a Compliance Mechanism for obligated entities and an Offset Mechanism for eligible non-obligated project activities.")
+
+    coverage = pd.DataFrame({
+        "Stage":["Initial GEI coverage (2025)","Expansion (Jan 2026)","Total notified coverage"],
+        "Entities":[282,208,490],
+        "Type":["Initial","Additional","Total"]
+    })
+    left,right = st.columns([1.45,1])
+    with left:
+        fig = px.bar(coverage, x="Stage", y="Entities", text="Entities", title="CCTS Coverage Development")
+        fig.update_traces(textposition="outside")
+        fig.update_layout(**PLOT_LAYOUT, showlegend=False, yaxis_title="Number of obligated entities", xaxis_title="")
+        st.plotly_chart(fig, use_container_width=True)
+    with right:
+        st.markdown("#### 🏛️ Who runs the market?")
+        st.markdown("**BEE ⓘ — Administrator**", help="Bureau of Energy Efficiency administers the Indian Carbon Market framework under CCTS.")
+        st.markdown("**CERC ⓘ — Regulator**", help="Central Electricity Regulatory Commission performs the regulatory role for carbon-credit certificate trading under the framework.")
+        st.markdown("**Grid India ⓘ — Registry**", help="Grid Controller of India performs registry functions for the Indian Carbon Market framework.")
+        st.markdown("**NSC-ICM ⓘ — Oversight**", help="National Steering Committee for Indian Carbon Market provides governance/oversight within the institutional architecture.")
+        st.info("Data point: 282 entities were covered in the initial notified GEI-target phase and 208 were subsequently added, taking reported coverage to 490. Keep the reference date visible when presenting this figure.")
+
     st.markdown("---")
 
-    st.markdown("### 🔄 How India's Carbon Credit Trading Scheme Works")
-    st.markdown("<p style='color:#90c0a0;font-size:.88rem'>The compliance mechanism is based on greenhouse-gas emission intensity. An obligated entity's performance is assessed against its notified target. Performance relative to that target determines whether Carbon Credit Certificates may be issued or whether certificates need to be surrendered.</p>", unsafe_allow_html=True)
-    steps=[("🏭","Obligated Entity","Covered industrial facility"),("🌫️","Measure GHG Intensity","Determine actual performance"),("🎯","Compare with Target","Government-notified GEI target"),("🪙","Carbon Credit Outcome","Issue or surrender CCCs")]
-    cols=st.columns(4)
-    for col,(icon,title,note) in zip(cols,steps):
-        col.markdown(f"""<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:18px;text-align:center;min-height:130px'><div style='font-size:1.5rem'>{icon}</div><b style='color:#4dff91'>{title}</b><div style='color:#90c0a0;font-size:.72rem;margin-top:6px'>{note}</div></div>""",unsafe_allow_html=True)
-    st.markdown("<br>",unsafe_allow_html=True)
-    a,b=st.columns(2)
-    a.success("✅ **Better than Target** — Lower GHG intensity than the applicable target can result in potential CCC issuance, subject to CCTS rules.")
-    b.warning("⚠️ **Target Not Achieved** — An obligated entity may need to acquire/surrender CCCs under the applicable compliance framework.")
+    # 2) COMPLIANCE VS OFFSET EXPLORER
+    st.markdown("### ⚖️ Compliance vs Offset Explorer")
+    mechanism = st.radio("Choose a CCTS mechanism ⓘ", ["Compliance Mechanism","Offset Mechanism"], horizontal=True,
+                         help="Use this explorer to distinguish mandatory target-based compliance from voluntary project-based crediting.")
+    if mechanism == "Compliance Mechanism":
+        a,b,c,d = st.columns(4)
+        a.metric("Who?", "Obligated entities", help="Entities formally notified under the compliance mechanism.")
+        b.metric("Basis", "GEI target", help="GEI means Greenhouse Gas Emission Intensity: emissions per unit of equivalent output/product under the applicable methodology.")
+        c.metric("Nature", "Compliance", help="Performance is assessed against the notified target for the relevant compliance cycle.")
+        d.metric("Outcome", "Issue / surrender CCCs", help="Performance relative to the applicable target can create an indicative certificate surplus or requirement, subject to CCTS procedures.")
+    else:
+        a,b,c,d = st.columns(4)
+        a.metric("Who?", "Eligible projects", help="Eligible non-obligated entities/projects can participate under approved offset methodologies.")
+        b.metric("Basis", "Methodology", help="A methodology specifies baseline, additionality, monitoring and quantification requirements for an eligible project activity.")
+        c.metric("Nature", "Project-based", help="Credits depend on eligible, validated and verified reductions/removals rather than an entity-level GEI compliance target.")
+        d.metric("Outcome", "Potential CCC issuance", help="Issuance remains subject to applicable registration, monitoring, validation/verification and CCTS procedures.")
+
     st.markdown("---")
 
-    st.markdown("### 🏭 CCTS Compliance Sector Tracker")
-    ccts_sectors=pd.DataFrame({
-        "Sector":["Aluminium","Cement","Chlor-Alkali","Pulp & Paper","Petroleum Refinery","Petrochemicals","Textiles"],
-        "Category":["Heavy Industry","Heavy Industry","Chemicals","Manufacturing","Energy","Chemicals","Manufacturing"],
-        "Primary Carbon Challenge":["Electricity and process emissions","Clinker and process emissions","Electricity-intensive production","Energy, heat and processing","Fuel processing and refining","Feedstock and process emissions","Heat, electricity and processing"]})
-    icons={"Aluminium":"🔩","Cement":"🏗️","Chlor-Alkali":"🧪","Pulp & Paper":"📄","Petroleum Refinery":"🛢️","Petrochemicals":"⚗️","Textiles":"🧵"}
-    sector_cols=st.columns(4)
-    for idx,row in ccts_sectors.iterrows():
-        sector_cols[idx%4].markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;border-radius:10px;padding:15px;margin-bottom:12px;min-height:145px'><div style='font-size:1.4rem'>{icons[row['Sector']]}</div><div style='color:#4dff91;font-weight:700;margin-top:5px'>{row['Sector']}</div><div style='color:#90c0a0;font-size:.7rem'>{row['Category']}</div><div style='color:#c0e0c0;font-size:.72rem;margin-top:8px;line-height:1.35'>{row['Primary Carbon Challenge']}</div></div>""",unsafe_allow_html=True)
+    # 3) CARBON-TO-FINANCE SIMULATOR
+    st.markdown("### 💰 Carbon-to-Finance Impact Simulator")
+    st.caption("Translate a GEI performance gap into an indicative carbon-credit position and financial sensitivity. This is a scenario tool—not an official compliance calculation or carbon-price forecast.")
+    i1,i2,i3,i4 = st.columns(4)
+    production = i1.number_input("Annual production ⓘ", min_value=0.0, value=1000000.0, step=10000.0,
+                                 help="Enter equivalent product/output for the scenario. Use the same production basis as the GEI denominator.")
+    target_gei = i2.number_input("Target GEI (tCO₂e/unit) ⓘ", min_value=0.0, value=0.70, step=0.01, format="%.3f",
+                                 help="Illustrative notified/assumed greenhouse-gas emission-intensity target for the scenario.")
+    actual_gei = i3.number_input("Actual GEI (tCO₂e/unit) ⓘ", min_value=0.0, value=0.75, step=0.01, format="%.3f",
+                                 help="Actual or scenario greenhouse-gas emission intensity on the same basis as the target.")
+    carbon_price = i4.number_input("Assumed CCC price (₹/tCO₂e) ⓘ", min_value=0.0, value=1000.0, step=100.0,
+                                   help="User-defined scenario price for sensitivity analysis. It is not presented as an observed or forecast market price.")
+
+    gei_gap = actual_gei - target_gei
+    indicative_qty = abs(gei_gap * production)
+    if gei_gap > 0:
+        position="Indicative requirement"
+        financial=indicative_qty*carbon_price
+        status="🟠 Actual GEI is above the target in this scenario."
+    elif gei_gap < 0:
+        position="Indicative surplus"
+        financial=indicative_qty*carbon_price
+        status="🟢 Actual GEI is below the target in this scenario."
+    else:
+        position="At target"
+        financial=0.0
+        status="🟢 Actual GEI equals the target in this scenario."
+    o1,o2,o3,o4 = st.columns(4)
+    o1.metric("GEI Gap", f"{gei_gap:+.3f}", help="Actual GEI minus Target GEI.")
+    o2.metric(position, f"{indicative_qty:,.0f} tCO₂e", help="Absolute GEI gap multiplied by annual production. Indicative analytical quantity only.")
+    o3.metric("Scenario Financial Value", f"₹{financial/1e7:,.2f} Cr", help="Indicative quantity multiplied by the user-assumed carbon price.")
+    o4.metric("Assumed Carbon Price", f"₹{carbon_price:,.0f}", help="Scenario assumption selected by the user; not an observed market quote.")
+    st.info(status + " Actual certificate issuance/surrender depends on applicable CCTS rules, verification and official procedures.")
+
+    prices=[250,500,750,1000,1250,1500,1750,2000]
+    sensitivity=pd.DataFrame({"Assumed CCC Price (₹/tCO₂e)":prices,
+                              "Financial Impact (₹ Cr)":[indicative_qty*x/1e7 for x in prices]})
+    fig=px.line(sensitivity,x="Assumed CCC Price (₹/tCO₂e)",y="Financial Impact (₹ Cr)",markers=True,
+                title="Carbon-Price Sensitivity — Indicative Financial Exposure / Opportunity")
+    fig.update_layout(**PLOT_LAYOUT)
+    st.plotly_chart(fig,use_container_width=True)
+
     st.markdown("---")
 
-    st.markdown("### ⚖️ Two Routes Inside the Indian Carbon Market")
-    compliance_col,offset_col=st.columns(2)
-    compliance_col.markdown("""<div style='background:linear-gradient(135deg,#0d3a1a,#102d20);border:1px solid #2a6a3a;border-radius:12px;padding:20px;min-height:260px'><div style='color:#4dff91;font-size:1.15rem;font-weight:700'>🏭 Compliance Mechanism</div><p style='color:#c0e0c0;font-size:.84rem;line-height:1.6'>Designed for obligated entities in notified energy-intensive sectors. Entities receive greenhouse-gas emission-intensity targets and actual performance is assessed against those targets.</p><div style='color:#90c0a0;font-size:.8rem;line-height:1.8'>🎯 Government-notified GEI targets<br>📊 Performance-based assessment<br>🪙 Carbon Credit Certificates<br>🏭 Obligated industrial entities</div></div>""",unsafe_allow_html=True)
-    offset_col.markdown("""<div style='background:linear-gradient(135deg,#0d3030,#0d3a1a);border:1px solid #2a6a5a;border-radius:12px;padding:20px;min-height:260px'><div style='color:#4dff91;font-size:1.15rem;font-weight:700'>🌱 Offset Mechanism</div><p style='color:#c0e0c0;font-size:.84rem;line-height:1.6'>Provides a project-based route through which eligible non-obligated entities can register activities that reduce, avoid or remove greenhouse-gas emissions under approved methodologies.</p><div style='color:#90c0a0;font-size:.8rem;line-height:1.8'>🌳 Project-based activities<br>📐 Approved methodologies<br>🔍 Validation and verification<br>🪙 Potential Carbon Credit Certificates</div></div>""",unsafe_allow_html=True)
+    # 4) MATERIALITY MATRIX
+    st.markdown("### 🎯 ESG Materiality Matrix")
+    st.caption("Sector-based analytical template for prioritising ESG issues. Scores below are illustrative research inputs—not company ESG ratings.")
+    sector = st.selectbox("Sector template ⓘ", ["Steel & Cement","Banking & Financial Services","IT & Technology","Pharma & Healthcare","Automobile"],
+                          help="Material ESG topics vary by sector. Select a template to see how issue priority can change with business model and stakeholder impact.")
+    templates={
+        "Steel & Cement":{"Climate & GHG":(9.5,9.5),"Energy":(8.8,9.0),"Water":(7.5,7.8),"Worker Safety":(8.5,8.2),"Waste & Circularity":(7.8,7.5),"Business Ethics":(7.0,8.0)},
+        "Banking & Financial Services":{"Financed Emissions":(8.8,9.2),"Data Privacy":(8.0,9.0),"Responsible Lending":(8.5,8.8),"Business Ethics":(8.2,9.2),"Human Capital":(7.0,7.5),"Operational GHG":(5.0,5.5)},
+        "IT & Technology":{"Energy & Data Centres":(8.0,8.2),"Data Privacy":(8.8,9.3),"Human Capital":(7.8,8.0),"E-waste":(7.0,6.8),"Business Ethics":(7.5,8.5),"Water":(6.5,6.2)},
+        "Pharma & Healthcare":{"Product Quality":(9.3,9.5),"Patient Safety":(9.5,9.4),"Water & Effluents":(8.0,7.8),"Waste":(7.8,7.5),"Ethics & Compliance":(8.8,9.0),"GHG & Energy":(6.8,7.0)},
+        "Automobile":{"Climate & GHG":(8.8,9.0),"EV Transition":(9.0,9.2),"Supply Chain":(8.2,8.5),"Product Safety":(8.8,8.8),"Circularity":(7.8,7.5),"Worker Safety":(7.2,7.0)}
+    }
+    mat=pd.DataFrame([{"Issue":k,"Impact Materiality":v[0],"Financial Materiality":v[1]} for k,v in templates[sector].items()])
+    fig=px.scatter(mat,x="Financial Materiality",y="Impact Materiality",text="Issue",size=[18]*len(mat),
+                   range_x=[4,10],range_y=[4,10],title=f"Illustrative Double-Materiality View — {sector}")
+    fig.update_traces(textposition="top center")
+    fig.update_layout(**PLOT_LAYOUT)
+    st.plotly_chart(fig,use_container_width=True)
+    st.caption("ⓘ Impact materiality considers effects on people/environment; financial materiality considers how ESG issues may affect enterprise value, costs, revenue, assets, financing or risk. Validate scoring with stakeholder engagement and evidence in a real engagement.")
+
     st.markdown("---")
 
-    st.markdown("### 🌱 Carbon Credit Project Opportunity Map")
-    offset_areas=[("⚡","Renewable / Energy","Clean-energy and efficiency activities"),("🏭","Industrial Processes","Lower-emission industrial processes"),("♻️","Waste Management","Methane capture and waste treatment"),("🌾","Agriculture","Emission-reduction agricultural practices"),("🌳","Forestry","Afforestation and eligible removals"),("🚚","Transport","Low-carbon mobility activities"),("💨","Fugitive Emissions","Methane and leakage reduction"),("🌍","Carbon Removal / CCUS","Eligible capture/removal activities")]
-    oc=st.columns(4)
-    for idx,(icon,title,ex) in enumerate(offset_areas):
-        oc[idx%4].markdown(f"""<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:16px;margin-bottom:12px;min-height:130px'><div style='font-size:1.5rem'>{icon}</div><div style='color:#4dff91;font-weight:700;font-size:.88rem;margin-top:5px'>{title}</div><div style='color:#90c0a0;font-size:.71rem;margin-top:7px;line-height:1.4'>{ex}</div></div>""",unsafe_allow_html=True)
+    # 5) BRSR / DISCLOSURE READINESS
+    st.markdown("### 📋 BRSR / ESG Disclosure Readiness Check")
+    st.caption("Interactive data-gap assessment for a corporate ESG reporting workflow. This does not represent any specific company's actual BRSR compliance status.")
+    disclosure_items={
+        "Environmental":["Scope 1 & Scope 2 GHG emissions","Energy consumption & renewable share","Water withdrawal/consumption","Waste generation & recovery"],
+        "Social":["Workforce composition & diversity","Health & safety indicators","Training & development","Employee turnover/attrition"],
+        "Governance":["Board/management ESG oversight","Ethics & anti-corruption controls","Grievance mechanisms","ESG data review/assurance evidence"]
+    }
+    total=0; ready=0
+    cols=st.columns(3)
+    for col,(pillar,items) in zip(cols,disclosure_items.items()):
+        with col:
+            st.markdown(f"#### {pillar} ⓘ")
+            for item in items:
+                total+=1
+                if st.checkbox(item, value=False, key=f"brsr_{pillar}_{item}"):
+                    ready+=1
+    readiness=(ready/total*100) if total else 0
+    r1,r2,r3=st.columns(3)
+    r1.metric("Data Points Ready",f"{ready}/{total}",help="Number of checklist items marked as available by the user.")
+    r2.metric("Illustrative Readiness",f"{readiness:.0f}%",help="Simple checklist completion percentage; not a regulatory compliance score.")
+    r3.metric("Data Gaps",str(total-ready),help="Checklist items not yet marked as available.")
+    st.progress(readiness/100)
+    if readiness < 50:
+        st.warning("Priority: establish ESG data owners, definitions, evidence trails and reporting controls before expanding disclosure.")
+    elif readiness < 85:
+        st.info("Next step: close remaining data gaps and strengthen review/assurance evidence for material KPIs.")
+    else:
+        st.success("High checklist coverage. Next step: validate definitions, boundaries, evidence and assurance requirements before reporting.")
+
     st.markdown("---")
 
-    st.markdown("### 🔄 India's Industrial Transition: PAT → CCTS")
-    st.markdown("<p style='color:#90c0a0;font-size:.88rem'>India's carbon-market development builds on its earlier industrial energy-efficiency architecture. The transition toward CCTS shifts the focus toward greenhouse-gas emission intensity and tradable Carbon Credit Certificates.</p>",unsafe_allow_html=True)
-    pat=[("⚡","PAT Scheme","Industrial energy efficiency"),("🔄","Transition","Carbon-market architecture"),("🌫️","GHG Intensity","Emission-intensity targets"),("🪙","CCTS","Carbon Credit Certificates")]
-    pc=st.columns(4)
-    for col,(icon,title,note) in zip(pc,pat):
-        col.markdown(f"""<div style='text-align:center;background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;padding:16px;min-height:120px'><div style='font-size:1.8rem'>{icon}</div><b style='color:#4dff91'>{title}</b><div style='color:#90c0a0;font-size:.72rem;margin-top:5px'>{note}</div></div>""",unsafe_allow_html=True)
-    st.markdown("---")
+    # 6) DECARBONISATION SCENARIO
+    st.markdown("### 📉 Decarbonisation Scenario Planner")
+    st.caption("Model how operational initiatives could reduce a baseline footprint. Reduction percentages are user assumptions, not forecasts.")
+    d1,d2=st.columns([1,1.4])
+    with d1:
+        baseline=st.number_input("Baseline emissions (tCO₂e) ⓘ",min_value=0.0,value=1000000.0,step=10000.0,
+                                 help="Enter the emissions baseline used for the scenario. In real analysis, define organisational/operational boundaries and reporting year.")
+        renewable=st.slider("Renewable electricity reduction %",0,40,12)
+        efficiency=st.slider("Energy-efficiency reduction %",0,30,8)
+        fuel=st.slider("Fuel/process transition reduction %",0,30,10)
+        supply=st.slider("Supply-chain initiatives reduction %",0,30,5)
+    total_reduction=min(renewable+efficiency+fuel+supply,95)
+    residual=baseline*(1-total_reduction/100)
+    with d2:
+        decarb=pd.DataFrame({"Stage":["Baseline","Renewable","Efficiency","Fuel / Process","Supply Chain","Residual"],
+                             "Emissions":[baseline,baseline*(1-renewable/100),baseline*(1-(renewable+efficiency)/100),baseline*(1-(renewable+efficiency+fuel)/100),residual,residual]})
+        fig=px.line(decarb,x="Stage",y="Emissions",markers=True,title="Illustrative Emissions Pathway")
+        fig.update_layout(**PLOT_LAYOUT,yaxis_title="tCO₂e")
+        st.plotly_chart(fig,use_container_width=True)
+    x1,x2,x3=st.columns(3)
+    x1.metric("Modelled Reduction",f"{total_reduction}%")
+    x2.metric("Residual Emissions",f"{residual:,.0f} tCO₂e")
+    x3.metric("Avoided vs Baseline",f"{baseline-residual:,.0f} tCO₂e")
 
-    st.markdown("### 🌏 Domestic Carbon Markets & International Cooperation")
-    st.info("🇮🇳 India's carbon-market development also sits within the broader Paris Agreement framework. Article 6 provides routes for voluntary international cooperation between countries in pursuing climate targets.")
-    intl=["🌱 Mitigation Project","📏 Measurement","🔍 Verification","🪙 Carbon Credit","🌏 Carbon Market"]
-    ic=st.columns(5)
-    for col,label in zip(ic,intl):
-        col.markdown(f"<div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:8px;padding:14px;text-align:center;min-height:72px;color:#c0e0c0'>{label}</div>",unsafe_allow_html=True)
     st.markdown("---")
-
-    st.markdown("### 📚 Government & Institutional References")
+    st.markdown("### 📚 Analyst Notes & Source Discipline")
     st.markdown("""
-    - **Bureau of Energy Efficiency (BEE)** — Carbon Credit Trading Scheme / Indian Carbon Market
-    - **Ministry of Power, Government of India** — CCTS notifications and compliance mechanism
-    - **Press Information Bureau (PIB)** — Indian Carbon Market implementation updates
-    - **Ministry of Environment, Forest and Climate Change (MoEFCC)** — India's climate commitments and Article 6 framework
-    - **UNFCCC / Paris Agreement** — International carbon-market cooperation under Article 6
+    - **CCTS / Indian Carbon Market:** use BEE, Ministry of Power and PIB notifications/updates; retain the reference date for every implementation figure.
+    - **Corporate ESG:** use company annual/sustainability/BRSR reports and distinguish reported, estimated and modelled values.
+    - **Financial scenarios:** clearly label carbon prices and financial impacts as assumptions unless an observed market price/source is used.
+    - **Materiality:** validate priorities using sector context, stakeholder evidence and company-specific exposure; do not present template scores as external ESG ratings.
+    - **Disclosure readiness:** treat checklist completion as a data-gap tool, not a regulatory-compliance opinion or assurance conclusion.
     """)
-    st.info("📌 Research Note: CCTS rules, obligated entities, methodologies, targets and project registrations can change as India's carbon market develops. Dashboard indicators should therefore be read with their respective notification/reference dates.")
+    st.info("Portfolio angle: this tab demonstrates a corporate ESG workflow—regulation → materiality → carbon exposure → financial sensitivity → disclosure readiness → decarbonisation—rather than only displaying climate statistics.")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 5 — COMPANY ESG
