@@ -6,7 +6,7 @@ import json
 import streamlit.components.v1 as components
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Climate Risk, ESG & Carbon Intelligence Dashboard",
+    page_title="Corporate ESG, Climate Risk & Carbon Intelligence Dashboard",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -24,47 +24,51 @@ def inject_ga():
     """, height=0)
 
 inject_ga()
-# ── Theme ─────────────────────────────────────────────────────────────────────
+# ── Theme — calm blue / white / purple ───────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
-html, body, [class*="css"] { font-family: 'Space Grotesk', sans-serif; }
-.stApp { background: linear-gradient(135deg, #0a1f0a 0%, #0d2b1a 50%, #0a1f2e 100%); color: #e0f0e0; }
-[data-testid="stSidebar"] { background: linear-gradient(180deg, #0d2b1a 0%, #0a1f0a 100%); border-right: 1px solid #1a4a2a; }
-[data-testid="stMetric"] { background: linear-gradient(135deg, #0d3a1a, #0a2a2a); border: 1px solid #2a6a3a; border-radius: 12px; padding: 16px; box-shadow: 0 4px 20px rgba(0,200,80,0.1); }
-[data-testid="stMetricValue"] { color: #4dff91 !important; font-size: 2rem !important; font-weight: 700 !important; }
-[data-testid="stMetricLabel"] { color: #90c0a0 !important; }
-h1, h2, h3 { color: #4dff91 !important; }
-h1 { font-size: 2.2rem !important; font-weight: 700 !important; }
-.stTabs [data-baseweb="tab-list"] { background: #0d2b1a; border-radius: 10px; padding: 4px; }
-.stTabs [data-baseweb="tab"] { color: #90c0a0; border-radius: 8px; }
-.stTabs [aria-selected="true"] { background: #1a5a2a !important; color: #4dff91 !important; }
-.stButton > button { background: linear-gradient(135deg, #1a5a2a, #0d3a4a); color: #4dff91; border: 1px solid #2a8a4a; border-radius: 8px; font-weight: 600; transition: all 0.2s; }
-.stButton > button:hover { background: linear-gradient(135deg, #2a7a3a, #1a5a6a); border-color: #4dff91; transform: translateY(-1px); }
-.stInfo { background: #0d3a2a; border-left: 4px solid #4dff91; color: #e0f0e0; }
-hr { border-color: #1a4a2a; }
-.stSelectbox > div > div { background: #0d2b1a; border-color: #2a6a3a; color: #e0f0e0; }
-.stProgress > div > div { background: linear-gradient(90deg, #1a5a2a, #4dff91); }
-.stTextInput > div > div { background: #0d2b1a; border-color: #2a6a3a; color: #e0f0e0; }
-.stSuccess { background: #0d3a1a; border-left: 4px solid #4dff91; }
-
-.source-badge {
-    display: inline-block; background: #0d3a1a; border: 1px solid #2a6a3a;
-    border-radius: 6px; padding: 3px 10px; font-size: 0.75rem; color: #4dff91; margin: 2px 4px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--navy:#0B1633;--blue:#298DB5;--sky:#7BBFD8;--purple:#7567C8;--ice:#F5F9FF;--card:#FFFFFF;--line:#DCE8F5;--text:#17233C;--muted:#60708C;}
+html, body, [class*="css"] { font-family:'Inter',sans-serif; }
+.stApp { background:linear-gradient(180deg,#F7FAFF 0%,#EEF5FC 55%,#F7F4FF 100%); color:var(--text); }
+[data-testid="stSidebar"] { background:#FFFFFF; border-right:1px solid var(--line); }
+[data-testid="stSidebar"] * { color:var(--text); }
+[data-testid="stMetric"] { background:#FFFFFF; border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:0 6px 22px rgba(34,74,130,.07); }
+[data-testid="stMetricValue"] { color:#1A3E6C !important; font-size:1.75rem !important; font-weight:700 !important; }
+[data-testid="stMetricLabel"] { color:var(--muted) !important; }
+h1,h2,h3 { color:#173B67 !important; font-family:'Space Grotesk',sans-serif; }
+h1 { font-size:2.05rem !important; }
+p, li, label, .stMarkdown { color:var(--text); }
+.stTabs [data-baseweb="tab-list"] { background:#FFFFFF; border:1px solid var(--line); border-radius:12px; padding:4px; gap:2px; position:sticky; top:0; z-index:5; }
+.stTabs [data-baseweb="tab"] { color:#52647F; border-radius:9px; padding:8px 12px; }
+.stTabs [aria-selected="true"] { background:#E9F2FF !important; color:#315A9A !important; }
+.stButton>button,.stDownloadButton>button { background:linear-gradient(135deg,#315A9A,#7567C8); color:white; border:0; border-radius:9px; font-weight:600; }
+.stButton>button:hover,.stDownloadButton>button:hover { filter:brightness(1.05); transform:none; }
+[data-testid="stAlert"] { border-radius:10px; }
+hr { border-color:var(--line); }
+.source-badge{display:inline-block;background:#EEF5FF;border:1px solid #CFE0F4;border-radius:6px;padding:3px 10px;font-size:.75rem;color:#315A9A;margin:2px 4px;}
+.hero-wrap{position:relative;overflow:hidden;border-radius:18px;min-height:260px;margin:8px 0 22px;background:linear-gradient(110deg,rgba(11,22,51,.88),rgba(49,90,154,.58)),url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80') center/cover;box-shadow:0 12px 35px rgba(30,62,110,.15);}
+.hero-wrap:after{content:'';position:absolute;inset:-10%;background:radial-gradient(circle at 75% 30%,rgba(123,191,216,.25),transparent 35%);animation:floatGlow 9s ease-in-out infinite alternate;}
+@keyframes floatGlow{from{transform:translate3d(-2%,0,0)}to{transform:translate3d(3%,2%,0)}}
+.hero-copy{position:relative;z-index:2;max-width:720px;padding:42px 44px;color:white}.hero-copy h2{color:white!important;font-size:2rem;margin:0 0 10px}.hero-copy p{color:#EDF5FF!important;line-height:1.65;font-size:1rem}.hero-kicker{font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;color:#BFE6F6;font-weight:700;margin-bottom:10px}
+.info-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 5px 18px rgba(34,74,130,.05);height:100%}.info-card h4{color:#315A9A;margin:0 0 8px}.info-card p{color:#5C6C84;line-height:1.55;margin:0;font-size:.9rem}
+.blog-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 5px 18px rgba(34,74,130,.05)}
+/* Reduce visual flicker and motion during Streamlit reruns */
+[data-testid="stAppViewContainer"]{transition:none!important} *{scroll-behavior:auto!important}
 </style>
 """, unsafe_allow_html=True)
 
 PLOT_LAYOUT = dict(
-    paper_bgcolor="rgba(10,31,10,0)",
-    plot_bgcolor="rgba(13,43,26,0.6)",
-    font=dict(color="#c0e0c0", family="Space Grotesk"),
-    title_font=dict(color="#4dff91", size=16),
-    xaxis=dict(gridcolor="#1a4a2a", linecolor="#2a6a3a"),
-    yaxis=dict(gridcolor="#1a4a2a", linecolor="#2a6a3a"),
-    colorway=["#4dff91", "#00c8ff", "#ffcc00", "#ff6b6b", "#b266ff"],
+    paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0.72)",
+    font=dict(color="#34445F", family="Inter"), title_font=dict(color="#173B67", size=16),
+    xaxis=dict(gridcolor="#E3ECF6", linecolor="#C8D8EA"),
+    yaxis=dict(gridcolor="#E3ECF6", linecolor="#C8D8EA"),
+    colorway=["#298DB5", "#7567C8", "#7BBFD8", "#1A3E6C", "#A78BFA"],
+    hoverlabel=dict(bgcolor="white", font_color="#17233C")
 )
-GREEN_SEQ = ["#0d3a1a", "#1a6a2a", "#2a9a4a", "#4dff91"]
+BLUE_SEQ = ["#D9EFF8", "#9DD4E5", "#5AB3D2", "#298DB5", "#1A3E6C"]
+GREEN_SEQ = BLUE_SEQ  # backward-compatible alias for existing charts
+CHART_CONFIG = {"displayModeBar": False, "scrollZoom": False, "doubleClick": False, "displaylogo": False}
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GOOGLE ANALYTICS 4 — FREE VISITOR TRACKING
@@ -221,7 +225,7 @@ COMPANY_ESG = pd.DataFrame({
 # ══════════════════════════════════════════════════════════════════════════════
 # visit_count tracked silently via GA — not shown to users
 st.sidebar.markdown("---")
-st.sidebar.markdown("## 🌿 Dashboard Controls")
+st.sidebar.markdown("## Dashboard Controls")
 
 data_scope = st.sidebar.radio(
     "🌐 Data Scope",
@@ -231,13 +235,15 @@ is_global = data_scope.startswith("🌍")
 df = GLOBAL_DATA if is_global else INDIA_DATA
 scope_label = "Global" if is_global else "India"
 
-uploaded_file = st.sidebar.file_uploader("📁 Upload your own CSV", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Upload CSV data", type=["csv"], help="Upload a CSV using the dashboard schema. The uploaded file is used only for this session.")
 if uploaded_file:
     try:
         df = pd.read_csv(uploaded_file)
         if "Fossil_Energy" not in df.columns:
             df["Fossil_Energy"] = 100 - df["Renewable_Energy"]
-        st.sidebar.success("✅ Custom data loaded!")
+        display_name = st.sidebar.text_input("Dataset display name", value=uploaded_file.name.rsplit(".",1)[0], help="Change how the uploaded dataset name appears in the dashboard.")
+        scope_label = display_name.strip() or "Uploaded Dataset"
+        st.sidebar.success(f"Loaded: {scope_label}")
     except Exception as e:
         st.sidebar.error(f"Error: {e}")
 
@@ -261,13 +267,14 @@ else:
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("# 🌍 Climate Risk, ESG & Carbon Intelligence Dashboard")
-st.markdown(
-    f"<p style='color:#90c0a0;font-size:1rem;margin-top:-10px'>"
-    f"Sustainable Finance · ESG Analytics · Climate Risk Modelling · "
-f"<b style='color:#4dff91'>{scope_label} View · Latest available data through 2026</b></p>",    unsafe_allow_html=True
-)
-st.markdown("---")
+st.markdown(f"""
+<div class="hero-wrap"><div class="hero-copy">
+<div class="hero-kicker">Climate intelligence · {scope_label}</div>
+<h2>Corporate ESG, Climate Risk & Carbon Intelligence</h2>
+<p>Turn climate, emissions and ESG data into a clearer decision view. Explore trends, compare risk, understand transition exposure and connect environmental performance with practical business action.</p>
+</div></div>
+""", unsafe_allow_html=True)
+st.caption("Hero image: a natural landscape represents the connection between environmental systems, resilience and long-term corporate decision-making.")
 # ── Data Status ───────────────────────────────────────────────────────────────
 if selected_year == 2026:
     st.info(
@@ -306,7 +313,7 @@ def snapshot_card(col, emoji, title, value, period, status, note):
             box-shadow:0 4px 20px rgba(0,200,80,0.08);
         ">
             <div style="color:#90c0a0;font-size:0.82rem;">{emoji} {title}</div>
-            <div style="color:#4dff91;font-size:1.75rem;font-weight:700;margin-top:8px;">{value}</div>
+            <div style="color:#315A9A;font-size:1.75rem;font-weight:700;margin-top:8px;">{value}</div>
             <div style="color:#ffffff;font-size:0.74rem;margin-top:10px;">{status} · {period}</div>
             <div style="color:#70a080;font-size:0.70rem;margin-top:7px;line-height:1.35;">{note}</div>
         </div>
@@ -341,10 +348,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-    "📈 Trends", "🗺️ Risk Map", "🆚 Global vs India", "🤖 AI Analyzer",
-    "🏢 Company ESG", "📊 Climate Targets", "📄 Export", "🔍 India vs World Deep Dive",
-    "🌱 Carbon Intelligence", "📚 Methodology & Sources"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11 = st.tabs([
+    "Trends", "Risk Globe", "Global vs India", "Corporate ESG & CCTS",
+    "Company ESG", "Climate Targets", "Export", "India vs World Deep Dive",
+    "Carbon Intelligence", "Methodology & Sources", "Insights & Blog"
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -357,27 +364,27 @@ with tab1:
                       title=f"{scope_label} CO₂ Emissions (Gt) — {'IEA/GCP 2026' if is_global else 'MoEF 2025'}")
         fig.update_traces(line_color="#ff6b6b", line_width=3, marker=dict(size=8, color="#ff6b6b"))
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = px.area(df, x="Year", y="Renewable_Energy",
                       title=f"Renewable Energy Share (%) — {'IEA 2025' if is_global else 'MNRE 2026'}")
         fig.update_traces(line_color="#4dff91", fillcolor="rgba(77,255,145,0.2)")
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     c3, c4 = st.columns(2)
     with c3:
         fig = px.bar(df, x="Year", y="ESG_Score", title="ESG Score Trend",
                      color="ESG_Score", color_continuous_scale=GREEN_SEQ)
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c4:
         fig = px.line(df, x="Year", y="Temp_Anomaly", markers=True,
                       title=f"Temperature Anomaly (°C) — {'WMO 2026' if is_global else 'IMD 2026'}")
         fig.update_traces(line_color="#ffcc00", line_width=3, marker=dict(size=8, color="#ffcc00"))
         fig.add_hline(y=1.5, line_dash="dash", line_color="#ff6b6b", annotation_text="1.5°C Paris Limit")
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     c5, c6 = st.columns(2)
     with c5:
@@ -386,27 +393,27 @@ with tab1:
                      title=f"Energy Mix — {selected_year}",
                      color_discrete_sequence=["#4dff91","#ff6b6b"])
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c6:
         fig = px.line(df, x="Year", y=["Physical_Risk","Transition_Risk"],
                       title="Physical vs Transition Risk Trend",
                       color_discrete_map={"Physical_Risk":"#ffcc00","Transition_Risk":"#00c8ff"})
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     if is_global and "Sea_Level_mm" in df.columns:
         fig = px.line(df, x="Year", y="Sea_Level_mm", markers=True,
                       title="Global Sea Level Rise (mm above 1993 baseline) — IPCC AR6 / NOAA 2026")
         fig.update_traces(line_color="#00c8ff", line_width=3, marker=dict(size=8))
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     if not is_global and "Extreme_Events" in df.columns:
         fig = px.bar(df, x="Year", y="Extreme_Events",
                      title="Extreme Weather Events in India per Year — MoEF SoE 2025",
                      color="Extreme_Events", color_continuous_scale=["#0d3a1a","#ffcc00","#ff6b6b"])
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     prev_esg = prev_df["ESG_Score"].values[0] if prev_df is not None else 0
     fig_gauge = go.Figure(go.Indicator(
@@ -420,61 +427,40 @@ with tab1:
                "threshold":{"line":{"color":"#ffffff","width":2},"value":75}}
     ))
     fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="#c0e0c0", height=280)
-    st.plotly_chart(fig_gauge, use_container_width=True)
+    st.plotly_chart(fig_gauge, use_container_width=True, config=CHART_CONFIG)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 2 — RISK MAP
+# TAB 2 — RISK GLOBE
 # ─────────────────────────────────────────────────────────────────────────────
 with tab2:
     risk_col = "Physical_Risk" if risk_type == "Physical Risk" else "Transition_Risk"
+    st.subheader("Global Climate Risk Globe" if is_global else "India Climate Risk — Globe View")
+    st.markdown("A fixed globe replaces the zoomable map. Marker size and colour represent the selected risk score; hover for details.")
+    map_df = GLOBAL_COUNTRY_RISK if is_global else INDIA_STATE_RISK
+    name_col = "Country" if is_global else "State"
+    hover_cols = [risk_col, "ESG_Score", "Renewable_Pct"] if is_global else [risk_col,"Flood_Risk","Drought_Risk","Cyclone_Risk"]
+    fig = px.scatter_geo(map_df, lat="Lat", lon="Lon", size=risk_col, color=risk_col, hover_name=name_col,
+                         hover_data=hover_cols, projection="orthographic",
+                         color_continuous_scale=["#CFE8F4","#7BBFD8","#7567C8","#1A3E6C"], size_max=28)
+    fig.update_geos(showland=True, landcolor="#EAF1F8", showocean=True, oceancolor="#DCEFFC",
+                    showcountries=True, countrycolor="#A9BDD3", showcoastlines=True, coastlinecolor="#9FB4CB",
+                    bgcolor="rgba(0,0,0,0)", lataxis_showgrid=False, lonaxis_showgrid=False)
+    fig.update_layout(**PLOT_LAYOUT, height=540, margin=dict(l=0,r=0,t=20,b=0), coloraxis_colorbar_title="Risk")
+    st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
+    st.caption("The globe is intentionally fixed: zoom, pan and chart toolbar controls are disabled for a cleaner presentation.")
 
-    if is_global:
-        st.subheader("🗺️ Global Country-level Climate Risk — IPCC AR6 + ND-GAIN 2025")
-        fig = px.scatter_map(
-            GLOBAL_COUNTRY_RISK, lat="Lat", lon="Lon",
-            size=risk_col, color=risk_col, hover_name="Country",
-            hover_data={risk_col:True,"ESG_Score":True,"Renewable_Pct":True,"Lat":False,"Lon":False},
-            color_continuous_scale=["#0d3a1a","#ffcc00","#ff4444"],
-            size_max=55, zoom=1.2, center={"lat":20,"lon":10},
-            map_style="carto-darkmatter",
-            title=f"Global {risk_type} by Country"
-        )
-    else:
-        st.subheader("🗺️ India State-wise Climate Risk — NDMA Vulnerability Atlas + MoEF SoE 2025")
-        fig = px.scatter_map(
-            INDIA_STATE_RISK, lat="Lat", lon="Lon",
-            size=risk_col, color=risk_col, hover_name="State",
-            hover_data={risk_col:True,"Flood_Risk":True,"Drought_Risk":True,"Cyclone_Risk":True,"Lat":False,"Lon":False},
-            color_continuous_scale=["#0d3a1a","#ffcc00","#ff4444"],
-            size_max=40, zoom=4, center={"lat":22.5,"lon":80.0},
-            map_style="carto-darkmatter",
-            title=f"India {risk_type} by State"
-        )
-    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="#c0e0c0", height=530, margin=dict(l=0,r=0,t=40,b=0))
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.subheader("🔥 Sector-wise Climate Risk Heatmap")
-    hm = pd.DataFrame({
-        "Sector":["Banking","Energy","Manufacturing","Agriculture","IT","Transport"],
-        "Physical Risk":[65,93,75,96,31,72],
-        "Transition Risk":[79,99,79,63,46,86],
-    })
-    fig = px.imshow(hm.set_index("Sector"), text_auto=True,
-                    color_continuous_scale=["#0d3a1a","#1a7a3a","#4dff91"],
-                    title="Sector Climate Risk — Physical vs Transition")
-    fig.update_layout(**PLOT_LAYOUT)
-    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("### What the risk view means")
+    a,b,c = st.columns(3)
+    a.markdown('<div class="info-card"><h4>Physical risk</h4><p>Exposure to heat, flood, drought, cyclone and other climate hazards that can affect assets, operations and supply chains.</p></div>', unsafe_allow_html=True)
+    b.markdown('<div class="info-card"><h4>Transition risk</h4><p>Exposure created by policy, technology, market and business-model changes during the shift toward lower-carbon activity.</p></div>', unsafe_allow_html=True)
+    c.markdown('<div class="info-card"><h4>How to use it</h4><p>Use the globe for comparative screening, then combine it with sector, company and source-specific evidence before making decisions.</p></div>', unsafe_allow_html=True)
 
     if not is_global:
-        hazard = st.selectbox("Select Hazard Type", ["Flood_Risk","Drought_Risk","Cyclone_Risk"])
-        fig = px.bar(INDIA_STATE_RISK.sort_values(hazard, ascending=False).head(15),
-                     x="State", y=hazard, color=hazard,
-                     color_continuous_scale=["#0d3a1a","#ffcc00","#ff4444"],
-                     title=f"Top 15 States — {hazard.replace('_',' ')} (NDMA 2022)")
-        fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.markdown("### Highest state-level hazard scores")
+        hazard = st.selectbox("Hazard", ["Flood_Risk","Drought_Risk","Cyclone_Risk"], format_func=lambda x:x.replace("_"," "))
+        top = INDIA_STATE_RISK.sort_values(hazard, ascending=False).head(8)[["State",hazard]]
+        st.dataframe(top, use_container_width=True, hide_index=True)
 
-# ─────────────────────────────────────────────────────────────────────────────
 # TAB 3 — GLOBAL VS INDIA COMPARISON
 # ─────────────────────────────────────────────────────────────────────────────
 with tab3:
@@ -519,10 +505,10 @@ with tab3:
                 <div style='color:#2a6a3a;font-size:1.5rem'>vs</div>
                 <div>
                   <div style='color:#aaa;font-size:0.7rem'>🇮🇳 India</div>
-                  <div style='color:#4dff91;font-size:1.3rem;font-weight:700'>{ival}</div>
+                  <div style='color:#315A9A;font-size:1.3rem;font-weight:700'>{ival}</div>
                 </div>
               </div>
-              <div style='color:#609070;font-size:0.72rem;margin-top:8px'>{tip}</div>
+              <div style='color:#60708C;font-size:0.72rem;margin-top:8px'>{tip}</div>
             </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -542,7 +528,7 @@ with tab3:
         fig.add_trace(go.Scatter(x=merged["Year"], y=merged["I_Renew"], name="India Renewable %",
                                  line=dict(color="#4dff91", width=3), mode="lines+markers"))
         fig.update_layout(**PLOT_LAYOUT, title="Renewable Energy Share (%) — Global vs India")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=merged["Year"], y=merged["G_ESG"], name="Global ESG Score",
@@ -550,7 +536,7 @@ with tab3:
         fig.add_trace(go.Scatter(x=merged["Year"], y=merged["I_ESG"], name="India ESG Score",
                                  line=dict(color="#4dff91", width=3), mode="lines+markers"))
         fig.update_layout(**PLOT_LAYOUT, title="ESG Score — Global vs India")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     c3, c4 = st.columns(2)
     with c3:
@@ -561,7 +547,7 @@ with tab3:
                                  line=dict(color="#4dff91", width=3), mode="lines+markers"))
         fig.add_hline(y=1.5, line_dash="dash", line_color="#ff6b6b", annotation_text="Paris 1.5°C limit")
         fig.update_layout(**PLOT_LAYOUT, title="Temperature Anomaly (°C) — Global vs India")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c4:
         fig = go.Figure()
         fig.add_trace(go.Bar(x=merged["Year"], y=merged["G_Phys"], name="Global Physical Risk",
@@ -569,7 +555,7 @@ with tab3:
         fig.add_trace(go.Bar(x=merged["Year"], y=merged["I_Phys"], name="India Physical Risk",
                              marker_color="#ff6b6b", opacity=0.8))
         fig.update_layout(**PLOT_LAYOUT, title="Physical Risk Score — Global vs India", barmode="group")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.markdown("---")
     st.subheader("💡 Key Differences — Global vs India")
@@ -589,73 +575,272 @@ with tab3:
                 c_ins.markdown(f"""
                 <div style='background:#0d3a1a;border:1px solid #2a6a3a;border-radius:10px;
                             padding:16px;margin-bottom:10px;height:100%'>
-                  <b style='color:#4dff91'>{title_ins}</b>
+                  <b style='color:#315A9A'>{title_ins}</b>
                   <p style='color:#c0e0c0;font-size:0.85rem;margin-top:8px'>{body_ins}</p>
                 </div>""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TAB 4 — AI ANALYZER
+# TAB 4 — CORPORATE ESG DECISION LAB
 # ─────────────────────────────────────────────────────────────────────────────
 with tab4:
-    st.subheader("🤖 AI Climate Risk Analyzer")
-    company_input = st.text_input("🏢 Company / Sector", placeholder="e.g. Tata Steel, Microsoft, Banking sector...")
-    if st.button("🔍 Analyze", use_container_width=True):
-        if company_input:
-            with st.spinner(f"Analyzing climate risk for **{company_input}**..."):
-                try:
-                    import urllib.request, ssl
-                    ctx_note = "India using MoEF SoE 2025 and India NDC 2022" if not is_global else "global context using IPCC AR6 and IEA 2025"
-                    prompt = f"""You are a climate risk and ESG analyst (data up to May 2026). Analyze climate risk for: {company_input}
-Use {ctx_note}. Reference 2025-2026 data where available.
+    st.subheader("💼 Corporate ESG & Carbon Decision Lab")
+    st.caption(
+        "A decision-support workflow linking ESG materiality, emissions, India's carbon-market framework, "
+        "financial sensitivity, disclosure readiness and management action. Government figures are reference-dated; "
+        "scenario outputs are analytical illustrations unless explicitly sourced."
+    )
 
-**ESG Score Estimate:** (out of 100)
-**Physical Risk Level:** (Low/Medium/High/Critical)
-**Transition Risk Level:** (Low/Medium/High/Critical)
-**Key Climate Risks:** (3 specific, quantified risks)
-**ESG Strengths:** (2 strengths)
-**Regulatory Context:** (IPCC 1.5°C pathway / India NDC / EU CBAM 2026 / SEBI BRSR Core FY2025 as applicable)
-**Recommendations:** (3 actions with timelines)
-**Overall Risk Rating:** (1-10)"""
+    # ── Executive corporate snapshot ──────────────────────────────────────────
+    st.markdown("### 🧭 Corporate Carbon Snapshot")
+    st.caption("Select a sector to see its key transition exposure, emissions hotspot and management response in one concise view.")
 
-                    payload = json.dumps({
-                        "model": "claude-sonnet-4-20250514",
-                        "max_tokens": 1000,
-                        "messages": [{"role":"user","content":prompt}]
-                    }).encode("utf-8")
-                    req = urllib.request.Request(
-                        "https://api.anthropic.com/v1/messages", data=payload,
-                        headers={"Content-Type":"application/json"}, method="POST"
-                    )
-                    with urllib.request.urlopen(req, context=ssl.create_default_context()) as resp:
-                        result = json.loads(resp.read().decode())
-                        ai_response = result["content"][0]["text"]
+    case_sector = st.selectbox(
+        "Sector",
+        ["Cement", "Aluminium", "Petroleum Refinery", "Petrochemicals", "Textiles", "Pulp & Paper", "Chlor-Alkali"],
+        help="Sector-level analytical view. Exposure labels are modelled indicators, not official government risk ratings."
+    )
 
-                    st.success("✅ Analysis Complete!")
-                    st.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);
-                        border:1px solid #2a6a3a;border-radius:12px;padding:24px;color:#e0f0e0;line-height:1.7'>
-                        {ai_response.replace(chr(10),'<br>')}</div>""", unsafe_allow_html=True)
-                except Exception:
-                    st.success("✅ Analysis (demo mode)")
-                    st.markdown(f"""<div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);
-                        border:1px solid #2a6a3a;border-radius:12px;padding:24px;color:#e0f0e0'>
-                        <b style='color:#4dff91'>ESG Score:</b> 68/100<br><br>
-                        <b style='color:#4dff91'>Physical Risk:</b> High &nbsp;|&nbsp;
-                        <b style='color:#4dff91'>Transition Risk:</b> High<br><br>
-                        <b style='color:#4dff91'>Key Risks for {company_input}:</b><br>
-                        • Carbon pricing exposure (India CCTS 2025 + EU CBAM now effective Jan 2026)<br>
-                        • Supply chain disruption — IPCC AR6: India high vulnerability region<br>
-                        • Stranded assets risk aligned with IEA Net Zero 2050 scenario<br><br>
-                        <b style='color:#4dff91'>Regulatory Context:</b><br>
-                        • India NDC 2022: 45% emissions intensity cut by 2030 vs 2005<br>
-                        • SEBI BRSR Core mandatory for top 150 listed companies (FY2025)<br>
-                        • EU CBAM effective January 2026 — impacts Indian steel/cement exporters<br><br>
-                        <b style='color:#4dff91'>Recommendations:</b><br>
-                        • Set SBTi targets aligned with 1.5°C pathway by 2026<br>
-                        • Raise renewable procurement to 60%+ by 2028 (MNRE target alignment)<br>
-                        • Disclose Scope 3 emissions under BRSR Core framework<br><br>
-                        <b style='color:#4dff91'>Overall Risk Rating:</b> 6.5/10</div>""", unsafe_allow_html=True)
-        else:
-            st.warning("Please enter a company or sector name.")
+    sector_data = {
+        "Cement": {"exposure":"High","hotspot":"Clinker production, process emissions and thermal energy","risk":"High transition exposure","response":"Alternative fuels, clinker substitution, efficiency and renewable electricity","material":"Climate & GHG"},
+        "Aluminium": {"exposure":"High","hotspot":"Electricity-intensive smelting and process emissions","risk":"High power-transition exposure","response":"Renewable power, efficiency and lower-carbon smelting","material":"Energy & GHG"},
+        "Petroleum Refinery": {"exposure":"High","hotspot":"Fuel combustion, hydrogen production and refinery processing","risk":"High energy-transition exposure","response":"Efficiency, low-carbon hydrogen, electrification and process optimisation","material":"Climate transition"},
+        "Petrochemicals": {"exposure":"High","hotspot":"Feedstocks, process heat and energy-intensive production","risk":"High feedstock and energy transition exposure","response":"Process efficiency, cleaner energy and lower-carbon feedstocks","material":"GHG & feedstocks"},
+        "Textiles": {"exposure":"Moderate","hotspot":"Thermal energy, electricity, dyeing and processing","risk":"Moderate energy-transition exposure","response":"Renewable electricity, efficient boilers and process efficiency","material":"Energy & water"},
+        "Pulp & Paper": {"exposure":"Moderate–High","hotspot":"Steam generation, electricity and industrial processing","risk":"Material energy and emissions exposure","response":"Biomass optimisation, energy efficiency and renewable power","material":"Energy, water & forests"},
+        "Chlor-Alkali": {"exposure":"High","hotspot":"Electricity-intensive electrolysis","risk":"High electricity-carbon-intensity exposure","response":"Renewable electricity and efficient membrane technology","material":"Energy & GHG"},
+    }
+    sd = sector_data[case_sector]
+
+    # Compact status strip: avoids oversized metric cards and truncated headings.
+    st.markdown(f"""
+    <div style='background:linear-gradient(135deg,rgba(13,50,31,.92),rgba(10,42,39,.92));border:1px solid rgba(77,255,145,.30);border-radius:14px;padding:16px 20px;margin:8px 0 16px;'>
+      <div style='display:flex;flex-wrap:wrap;gap:12px 34px;align-items:center;'>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CARBON EXPOSURE</span><br><b style='color:#315A9A;font-size:1.15rem'>{sd['exposure']}</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>KEY ISSUE</span><br><b style='color:#f2fff5;font-size:1.05rem'>{sd['material']}</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CCTS LENS</span><br><b style='color:#f2fff5;font-size:1.05rem'>Compliance</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>CORE METRIC</span><br><b style='color:#f2fff5;font-size:1.05rem'>GEI</b></div>
+        <div><span style='color:#8fcda4;font-size:.78rem'>VIEW</span><br><b style='color:#f2fff5;font-size:1.05rem'>Scenario</b></div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("#### 🔍 What matters for this sector?")
+    p1,p2,p3 = st.columns(3)
+    with p1:
+        st.markdown(f"""
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#315A9A;font-weight:700;margin-bottom:12px'>🌫️ Emissions Hotspot</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['hotspot']}</div>
+        </div>""", unsafe_allow_html=True)
+    with p2:
+        st.markdown(f"""
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#315A9A;font-weight:700;margin-bottom:12px'>⚠️ Transition Risk</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['risk']}</div>
+          <div style='color:#8fcda4;font-size:.80rem;margin-top:13px'>Financial channel</div>
+          <div style='color:#f2fff5;margin-top:3px'>Potential compliance cost and transition capex</div>
+        </div>""", unsafe_allow_html=True)
+    with p3:
+        st.markdown(f"""
+        <div style='background:#0d321f;border:1px solid #2a6a3a;border-radius:12px;padding:17px;min-height:175px'>
+          <div style='color:#315A9A;font-weight:700;margin-bottom:12px'>🎯 Management Response</div>
+          <div style='color:#f2fff5;line-height:1.55'>{sd['response']}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.caption("ⓘ Exposure and management-response labels are analytical sector scenarios. Use verified company disclosures and applicable CCTS targets for company-specific assessment.")
+
+    st.markdown("---")
+
+    # ── CCTS tracker ──────────────────────────────────────────────────────────
+    st.markdown("### 🇮🇳 CCTS Implementation Tracker")
+    m1,m2,m3,m4 = st.columns(4)
+    m1.metric("Obligated Entities ⓘ", "490", help="Notified industrial entities covered by the CCTS compliance mechanism in the government implementation update used here.")
+    m2.metric("Compliance Sectors ⓘ", "7", help="Seven industrial sectors had notified GEI targets in the reference government update used for this dashboard.")
+    m3.metric("Offset Methodologies ⓘ", "9", help="Approved methodologies provide rules for quantifying eligible reductions/removals under the offset mechanism.")
+    m4.metric("Mechanisms ⓘ", "2", help="Compliance Mechanism and Offset Mechanism.")
+
+    coverage = pd.DataFrame({
+        "Stage":["Initial GEI coverage (2025)","Expansion (Jan 2026)","Total notified coverage"],
+        "Entities":[282,208,490],
+        "Type":["Initial","Additional","Total"]
+    })
+    left,right = st.columns([1.45,1])
+    with left:
+        fig = px.bar(coverage, x="Stage", y="Entities", text="Entities", title="CCTS Coverage Development")
+        fig.update_traces(textposition="outside")
+        fig.update_layout(**PLOT_LAYOUT, showlegend=False, yaxis_title="Number of obligated entities", xaxis_title="")
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
+    with right:
+        st.markdown("#### 🏛️ Institutional Architecture")
+        st.markdown("**BEE ⓘ — Administrator**", help="Bureau of Energy Efficiency administers the Indian Carbon Market framework under CCTS.")
+        st.markdown("**CERC ⓘ — Regulator**", help="Central Electricity Regulatory Commission performs the regulatory role for CCC trading under the framework.")
+        st.markdown("**Grid India ⓘ — Registry**", help="Grid Controller of India performs registry functions for the Indian Carbon Market framework.")
+        st.markdown("**NSC-ICM ⓘ — Oversight**", help="National Steering Committee for Indian Carbon Market provides governance/oversight.")
+        st.info("Reference implementation figures: 282 entities initially covered + 208 subsequently added = 490. Retain the source date when presenting these figures.")
+
+    with st.expander("ⓘ Compliance vs Offset — quick explainer"):
+        st.markdown("""
+        **Compliance mechanism:** notified obligated entities are assessed against applicable GHG Emission Intensity (GEI) targets.  
+        **Offset mechanism:** eligible project activities follow approved methodologies for quantified emission reductions/removals.  
+        **CCC:** Carbon Credit Certificate used within the CCTS framework.  
+        This dashboard does not determine official issuance or surrender obligations.
+        """)
+
+    st.markdown("---")
+
+    # ── Carbon-to-finance simulator ───────────────────────────────────────────
+    st.markdown("### 💰 Carbon Cost & Financial Impact")
+    st.caption("Illustrative scenario: GEI performance → indicative carbon position → financial sensitivity. Not an official compliance calculation or carbon-price forecast.")
+    i1,i2,i3 = st.columns(3)
+    production = i1.number_input("Annual Production ⓘ", min_value=1.0, value=1000000.0, step=10000.0,
+                                 help="Illustrative annual output. Use the same production basis as the GEI denominator.")
+    target_gei = i2.number_input("Target GEI (tCO₂e/unit) ⓘ", min_value=0.001, value=0.700, step=0.010, format="%.3f",
+                                 help="Illustrative target. Use the applicable notified value when analysing a real obligated entity.")
+    actual_gei = i3.number_input("Actual GEI (tCO₂e/unit) ⓘ", min_value=0.001, value=0.750, step=0.010, format="%.3f",
+                                 help="Actual or scenario GEI on the same basis as the target.")
+    carbon_price = st.slider("Assumed CCC Price (₹/tCO₂e) ⓘ", 100, 3000, 1000, 100,
+                             help="User-defined sensitivity assumption; not an observed or forecast market price.")
+
+    gei_gap = actual_gei-target_gei
+    qty = abs(gei_gap*production)
+    value = qty*carbon_price
+    per_unit = value/production if production else 0
+    if gei_gap>0:
+        position_label="Indicative Carbon Position"; finance_label="Potential Carbon Cost"; status="🟠 Potential compliance exposure"
+    elif gei_gap<0:
+        position_label="Indicative Carbon Position"; finance_label="Potential Carbon Value"; status="🟢 Potential carbon-credit opportunity"
+    else:
+        position_label="Indicative CCC Position"; finance_label="Indicative Financial Impact"; status="🔵 At assumed GEI target"
+    o1,o2,o3 = st.columns(3)
+    o1.metric(position_label, f"{qty:,.0f}", help="Absolute GEI gap × annual production; analytical quantity only.")
+    o2.metric(finance_label, f"₹{value/1e7:,.2f} Cr", help="Indicative quantity × assumed CCC price.")
+    o3.metric("Impact per Unit", f"₹{per_unit:,.2f}", help="Illustrative financial impact divided by annual production.")
+    st.info(f"{status}. Actual certificate issuance/surrender depends on applicable CCTS rules, verification and official procedures.")
+
+    prices=[250,500,750,1000,1500,2000,2500,3000]
+    sensitivity=pd.DataFrame({"Assumed Carbon Price (₹/tCO₂e)":prices,
+                              "Financial Impact (₹ Cr)":[qty*p/1e7 for p in prices]})
+    fig=px.line(sensitivity,x="Assumed Carbon Price (₹/tCO₂e)",y="Financial Impact (₹ Cr)",markers=True,
+                title=f"{case_sector}: Carbon-Price Sensitivity")
+    fig.update_layout(**PLOT_LAYOUT)
+    st.plotly_chart(fig,use_container_width=True, config=CHART_CONFIG)
+
+    st.markdown("#### 💼 ESG Analyst Interpretation")
+    if gei_gap>0:
+        st.info(f"In this illustrative {case_sector} scenario, actual GEI is {gei_gap:.3f} tCO₂e/unit above the assumed target. The model indicates about {qty:,.0f} tCO₂e of potential carbon exposure, worth roughly ₹{value/1e7:,.2f} crore at the selected scenario price. This strengthens the case for comparing decarbonisation investment with potential carbon-cost exposure.")
+    elif gei_gap<0:
+        st.success(f"In this illustrative {case_sector} scenario, actual GEI is {abs(gei_gap):.3f} tCO₂e/unit below the assumed target. The model indicates about {qty:,.0f} tCO₂e of potential surplus, with an illustrative value of ₹{value/1e7:,.2f} crore at the selected scenario price. Treat this as analytical sensitivity, not an issuance forecast.")
+    else:
+        st.info("The scenario is exactly at the assumed GEI target. Future target tightening, technology transition and carbon-price conditions can still affect transition exposure.")
+
+    st.markdown("---")
+
+    # ── Materiality ───────────────────────────────────────────────────────────
+    st.markdown("### 🎯 ESG Materiality Matrix")
+    st.caption("Sector-based analytical template. Scores are illustrative research inputs—not external ESG ratings.")
+    mat_sector = st.selectbox("Sector template ⓘ", ["Steel & Cement","Banking & Financial Services","IT & Technology","Pharma & Healthcare","Automobile"],
+                              help="Select a sector to see how material ESG topics can change with business model and stakeholder impact.")
+    templates={
+        "Steel & Cement":{"Climate & GHG":(9.5,9.5),"Energy":(8.8,9.0),"Water":(7.5,7.8),"Worker Safety":(8.5,8.2),"Waste & Circularity":(7.8,7.5),"Business Ethics":(7.0,8.0)},
+        "Banking & Financial Services":{"Financed Emissions":(8.8,9.2),"Data Privacy":(8.0,9.0),"Responsible Lending":(8.5,8.8),"Business Ethics":(8.2,9.2),"Human Capital":(7.0,7.5),"Operational GHG":(5.0,5.5)},
+        "IT & Technology":{"Energy & Data Centres":(8.0,8.2),"Data Privacy":(8.8,9.3),"Human Capital":(7.8,8.0),"E-waste":(7.0,6.8),"Business Ethics":(7.5,8.5),"Water":(6.5,6.2)},
+        "Pharma & Healthcare":{"Product Quality":(9.3,9.5),"Patient Safety":(9.5,9.4),"Water & Effluents":(8.0,7.8),"Waste":(7.8,7.5),"Ethics & Compliance":(8.8,9.0),"GHG & Energy":(6.8,7.0)},
+        "Automobile":{"Climate & GHG":(8.8,9.0),"EV Transition":(9.0,9.2),"Supply Chain":(8.2,8.5),"Product Safety":(8.8,8.8),"Circularity":(7.8,7.5),"Worker Safety":(7.2,7.0)}
+    }
+    mat=pd.DataFrame([{"Issue":k,"Impact Materiality":v[0],"Financial Materiality":v[1]} for k,v in templates[mat_sector].items()])
+    fig=px.scatter(mat,x="Financial Materiality",y="Impact Materiality",text="Issue",size=[18]*len(mat),
+                   range_x=[4,10],range_y=[4,10],title=f"Illustrative Double-Materiality View — {mat_sector}")
+    fig.update_traces(textposition="top center")
+    fig.update_layout(**PLOT_LAYOUT)
+    st.plotly_chart(fig,use_container_width=True, config=CHART_CONFIG)
+    st.caption("ⓘ Impact materiality considers effects on people/environment; financial materiality considers potential effects on enterprise value, costs, revenue, assets, financing or risk. Validate scoring with evidence and stakeholder engagement in a real study.")
+
+    st.markdown("---")
+
+    # ── Disclosure readiness ──────────────────────────────────────────────────
+    st.markdown("### 📋 BRSR / ESG Disclosure Readiness")
+    st.caption("A data-gap checklist—not a regulatory-compliance opinion or external assurance conclusion.")
+    disclosure_items={
+        "Environmental":["Scope 1 & Scope 2 GHG emissions","Energy consumption & renewable share","Water withdrawal/consumption","Waste generation & recovery"],
+        "Social":["Workforce composition & diversity","Health & safety indicators","Training & development","Employee turnover/attrition"],
+        "Governance":["Board/management ESG oversight","Ethics & anti-corruption controls","Grievance mechanisms","ESG data review/assurance evidence"]
+    }
+    total=0; ready=0
+    cols=st.columns(3)
+    for col,(pillar,items) in zip(cols,disclosure_items.items()):
+        with col:
+            st.markdown(f"#### {pillar}")
+            for item in items:
+                total+=1
+                if st.checkbox(item, value=False, key=f"brsr_final_{pillar}_{item}"):
+                    ready+=1
+    readiness=ready/total*100 if total else 0
+    r1,r2,r3=st.columns(3)
+    r1.metric("Data Points Ready",f"{ready}/{total}")
+    r2.metric("Checklist Coverage",f"{readiness:.0f}%",help="Simple completion percentage; not a BRSR compliance score.")
+    r3.metric("Data Gaps",str(total-ready))
+    st.progress(readiness/100)
+    if readiness<50: st.warning("Priority: establish ESG data owners, definitions, evidence trails and reporting controls.")
+    elif readiness<85: st.info("Next step: close remaining data gaps and strengthen review/assurance evidence for material KPIs.")
+    else: st.success("High checklist coverage. Validate definitions, boundaries, evidence and assurance requirements before reporting.")
+
+    st.markdown("---")
+
+    # ── Decarbonisation + management action ───────────────────────────────────
+    st.markdown("### 📉 Decarbonisation & Management Action Planner")
+    st.caption("Test user-defined reduction levers, then compare management actions. Percentages and priorities are scenario assumptions unless sourced.")
+    d1,d2=st.columns([1,1.4])
+    with d1:
+        baseline=st.number_input("Baseline emissions (tCO₂e) ⓘ",min_value=0.0,value=1000000.0,step=10000.0,
+                                 help="Define the reporting boundary and baseline year when using real company data.")
+        renewable=st.slider("Renewable electricity reduction %",0,40,12,key="final_renew")
+        efficiency=st.slider("Energy-efficiency reduction %",0,30,8,key="final_eff")
+        fuel=st.slider("Fuel/process transition reduction %",0,30,10,key="final_fuel")
+        supply=st.slider("Supply-chain initiatives reduction %",0,30,5,key="final_supply")
+    total_reduction=min(renewable+efficiency+fuel+supply,95)
+    residual=baseline*(1-total_reduction/100)
+    with d2:
+        decarb=pd.DataFrame({"Stage":["Baseline","Renewable","Efficiency","Fuel / Process","Supply Chain","Residual"],
+                             "Emissions":[baseline,baseline*(1-renewable/100),baseline*(1-(renewable+efficiency)/100),baseline*(1-(renewable+efficiency+fuel)/100),residual,residual]})
+        fig=px.line(decarb,x="Stage",y="Emissions",markers=True,title="Illustrative Emissions Pathway")
+        fig.update_layout(**PLOT_LAYOUT,yaxis_title="tCO₂e")
+        st.plotly_chart(fig,use_container_width=True, config=CHART_CONFIG)
+    x1,x2,x3=st.columns(3)
+    x1.metric("Modelled Reduction",f"{total_reduction}%")
+    x2.metric("Residual Emissions",f"{residual:,.0f} tCO₂e")
+    x3.metric("Avoided vs Baseline",f"{baseline-residual:,.0f} tCO₂e")
+
+    action_df=pd.DataFrame({
+        "Management Action":["Energy efficiency","Renewable electricity","Fuel / process transition","Supply-chain engagement"],
+        "Emission Impact":["Medium","High","High","Medium"],
+        "Indicative Cost":["Low–Medium","Medium","High","Medium"],
+        "Time Horizon":["Short","Short–Medium","Medium–Long","Medium"],
+        "Decision Lens":["Operational savings","Power decarbonisation","Strategic technology capex","Value-chain engagement"]
+    })
+    st.markdown("#### 🧩 Management Action Prioritisation")
+    st.dataframe(action_df,use_container_width=True,hide_index=True)
+    st.caption("ⓘ This table is an illustrative management framework. Replace qualitative assumptions with company/sector evidence for a formal case study.")
+
+    st.markdown("---")
+
+    # ── Data transparency ─────────────────────────────────────────────────────
+    st.markdown("### 🔎 Data Transparency")
+    st.caption("A compact guide to how information is classified across the dashboard.")
+    st.markdown("""
+    <div style='background:linear-gradient(135deg,rgba(13,49,31,.88),rgba(11,40,38,.88));border:1px solid rgba(67,255,136,.28);border-radius:14px;padding:17px 20px;margin-top:8px;'>
+      <div style='display:flex;flex-wrap:wrap;gap:12px 26px;align-items:center;'>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Reported</b> <span style='color:#8da99a;font-size:.82rem'>Company disclosures</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Government</b> <span style='color:#8da99a;font-size:.82rem'>Official sources</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Calculated</b> <span style='color:#8da99a;font-size:.82rem'>Derived metrics</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Modelled</b> <span style='color:#8da99a;font-size:.82rem'>Analytical outputs</span></div>
+        <div><span style='color:#43ff88'>●</span> <b style='color:#fff'>Assumption</b> <span style='color:#8da99a;font-size:.82rem'>User scenarios</span></div>
+      </div>
+      <div style='border-top:1px solid rgba(255,255,255,.08);margin-top:14px;padding-top:10px;color:#91aa9b;font-size:.80rem'>
+        ⓘ Tooltips and captions identify definitions, assumptions and interpretation where relevant.
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 5 — COMPANY ESG
@@ -672,19 +857,19 @@ with tab5:
                      title="ESG Score by Company", color="ESG_Score", color_continuous_scale=GREEN_SEQ,
                      hover_data={"Country":True,"Sector":True})
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = px.scatter(fco, x="CO2_Intensity", y="ESG_Score", size="Renewable_Pct",
                          color="Sector", hover_name="Company",
                          title="CO₂ Intensity vs ESG Score (bubble = renewable %)", size_max=40)
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     fig = px.bar(fco.sort_values("Scope1_Mt", ascending=False),
                  x="Company", y="Scope1_Mt", color="Sector",
                  title="Scope 1 Emissions (Mt CO₂e) — Company Level")
     fig.update_layout(**PLOT_LAYOUT)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     st.dataframe(fco, use_container_width=True)
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 6 — Climate Targets
@@ -704,7 +889,7 @@ with tab6:
         fig.add_hline(y=1.5, line_dash="dash", line_color="white", annotation_text="1.5°C Paris")
         fig.add_hline(y=2.0, line_dash="dot",  line_color="#ffcc00", annotation_text="2°C Paris")
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         # Updated 2026 NDC progress figures (MNRE/MoEF 2026)
         ndc = pd.DataFrame({
@@ -716,7 +901,7 @@ with tab6:
                      title="India NDC 2030 Targets vs 2026 Progress — MoEF/MNRE",
                      color_discrete_map={"NDC 2030 Target":"#2a6a3a","Progress 2026":"#4dff91"})
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     tp = pd.DataFrame({
         "System":       ["Arctic Sea Ice","Greenland Ice Sheet","W. Antarctic Ice","Amazon Rainforest",
@@ -730,7 +915,7 @@ with tab6:
                      title="IPCC AR6 Climate Tipping Points (bubble size = India impact score)", size_max=45)
     fig.add_vline(x=1.5, line_dash="dash", line_color="#ff6b6b", annotation_text="1.5°C threshold")
     fig.update_layout(**PLOT_LAYOUT)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("""
     **Key Sources:**
@@ -771,7 +956,7 @@ with tab7:
     st.download_button(f"🆚 Global vs India Comparison {yr_dl} (CSV)", comp_df.to_csv(index=False).encode(),
                        f"global_vs_india_{yr_dl}.csv", "text/csv", use_container_width=True)
 
-    st.info("💡 Hover over any chart → click the 📷 icon to export as PNG image.")
+    st.info("Charts use a clean presentation mode with zoom and toolbar controls removed. Use the CSV downloads above for analysis and reporting.")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 8 — INDIA vs WORLD DEEP DIVE (NEW)
@@ -803,13 +988,13 @@ with tab8:
                      color="PerCapita_tCO2", color_continuous_scale=["#0d3a1a","#ffcc00","#ff6b6b"])
         fig.add_hline(y=2.2, line_dash="dash", line_color="#4dff91", annotation_text="India (2.2t)")
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = px.bar(em_compare, x="Country", y="Intensity_gCO2_per_kWh",
                      title="Grid Emission Intensity (gCO₂/kWh, 2025) — IEA 2025",
                      color="Intensity_gCO2_per_kWh", color_continuous_scale=["#0d3a1a","#ffcc00","#ff6b6b"])
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("🇮🇳 **India insight:** India's per-capita emissions (2.2 tCO₂) are less than half the global average (4.8t) and 6.7x lower than the US — making India's historical responsibility argument central to COP negotiations.")
 
@@ -833,8 +1018,8 @@ with tab8:
     ]:
         fig.add_trace(go.Bar(x=renew_compare["Country"], y=renew_compare[col], name=name))
     fig.update_layout(**PLOT_LAYOUT, barmode="group",
-                      title="Renewable Share (%) — 2020, 2023, 2026, and 2030 Targets")
-    st.plotly_chart(fig, use_container_width=True)
+                      title="Renewable Share (%) — 2020 · 2023 · 2026 · 2030 Targets")
+    st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("🇮🇳 **India insight:** India's renewable share grew 20.5 percentage points from 2016 to 2026, the fastest growth rate among major G20 economies. India added 26 GW of solar in 2025 alone (MNRE 2026).")
 
@@ -860,7 +1045,7 @@ with tab8:
                      color="Scope_Coverage", color_continuous_scale=GREEN_SEQ,
                      hover_data={"Mandatory":True,"Enforcer":True,"Year_Effective":True})
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = px.scatter(esg_framework, x="Year_Effective", y="Scope_Coverage",
                          color="Mandatory", size="Scope_Coverage",
@@ -871,7 +1056,7 @@ with tab8:
                                               "Voluntary/Adopted":"#b266ff","Yes (Listed Co.)":"#4dff91",
                                               "Yes (Top 1000 FY2024)":"#2a9a4a"})
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("🇮🇳 **India insight:** SEBI BRSR Core (FY2025) mandates Scope 3 disclosure for India's top 150 listed companies — making India one of the few emerging markets with mandatory Scope 3 reporting, comparable to EU's CSRD.")
 
@@ -891,14 +1076,14 @@ with tab8:
                      title="Green Finance Flows (USD Bn, 2025) — Climate Policy Initiative 2025",
                      color="Green_Finance_USD_Bn_2025", color_continuous_scale=GREEN_SEQ)
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         fig = px.scatter(fin_data, x="Green_Finance_USD_Bn_2025", y="Climate_Vulnerability_Index",
                          size="Green_Bond_USD_Bn_2025", hover_name="Region",
                          title="Green Finance vs Vulnerability (bubble = Green Bond issuance)",
                          size_max=50, color="Region")
         fig.update_layout(**PLOT_LAYOUT)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("🇮🇳 **India insight:** India received $49Bn in green finance in 2025 — yet faces a $170Bn annual gap to meet its NDC targets by 2030 (Climate Policy Initiative 2025). India's Climate Finance Gap is the largest unmet need among non-OECD G20 economies.")
 
@@ -920,7 +1105,7 @@ with tab8:
                  barmode="group",
                  color_discrete_sequence=["#ff6b6b","#00c8ff","#ffcc00","#4dff91","#b266ff"])
     fig.update_layout(**PLOT_LAYOUT)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
 
     st.info("🇮🇳 **India insight:** India ranks in the top 3 globally for heat stress and flood risk among major economies. The 2025 monsoon season brought 347 extreme weather events — a record high (MoEF SoE 2025). 600M+ Indians are exposed to high climate risk by 2030 (IPCC AR6).")
 
@@ -966,7 +1151,7 @@ with tab8:
             title=dict(text="India vs Global — Radar Scorecard (higher = better outcome)", font=dict(color='#4dff91', size=14)),
             legend=dict(bgcolor='#0d2b1a', bordercolor='#2a6a3a')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config=CHART_CONFIG)
     with c2:
         st.markdown("#### 📋 Raw Scores")
         st.dataframe(
@@ -1296,13 +1481,13 @@ with tab9:
         st.markdown(f"""
         <div style='background:linear-gradient(135deg,#0d3a1a,#0a2a2a);border:1px solid #2a6a3a;
                     border-radius:12px;padding:20px;line-height:1.75'>
-          <b style='color:#4dff91'>Baseline:</b> {baseline_emissions:,.0f} tCO₂e<br>
-          <b style='color:#4dff91'>Current reduction:</b> {achieved_reduction:,.0f} tCO₂e ({achieved_pct:.1f}%)<br>
-          <b style='color:#4dff91'>Selected target:</b> {target_reduction_pct}% reduction<br>
-          <b style='color:#4dff91'>Projected emissions:</b> {projected_emissions:,.0f} tCO₂e<br>
-          <b style='color:#4dff91'>Target status:</b> {status_text}<br>
-          <b style='color:#4dff91'>Selected pathway:</b> {selected_project}<br>
-          <b style='color:#4dff91'>Potential methodology:</b> {p['method']}
+          <b style='color:#315A9A'>Baseline:</b> {baseline_emissions:,.0f} tCO₂e<br>
+          <b style='color:#315A9A'>Current reduction:</b> {achieved_reduction:,.0f} tCO₂e ({achieved_pct:.1f}%)<br>
+          <b style='color:#315A9A'>Selected target:</b> {target_reduction_pct}% reduction<br>
+          <b style='color:#315A9A'>Projected emissions:</b> {projected_emissions:,.0f} tCO₂e<br>
+          <b style='color:#315A9A'>Target status:</b> {status_text}<br>
+          <b style='color:#315A9A'>Selected pathway:</b> {selected_project}<br>
+          <b style='color:#315A9A'>Potential methodology:</b> {p['method']}
         </div>
         """, unsafe_allow_html=True)
 
@@ -1389,15 +1574,30 @@ with tab10:
         "and should be replaced with traceable licensed or primary-source datasets for production-grade use."
     )
 
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 11 — INSIGHTS & BLOG
+# ─────────────────────────────────────────────────────────────────────────────
+with tab11:
+    st.subheader("Insights & Blog")
+    st.markdown("Short explainers turn the dashboard's charts into practical climate and ESG context. This section is deliberately text-led to balance the analytical pages.")
+    st.markdown("""
+    <div class="blog-card"><h3>Why climate risk belongs in business decisions</h3><p>Climate risk is not only an environmental topic. Physical hazards can disrupt facilities, logistics and suppliers, while transition policies can change energy costs, technology choices and capital requirements. A useful dashboard therefore connects risk indicators with the business channels through which those risks may be felt.</p></div>
+    <div class="blog-card"><h3>Reading an ESG score with context</h3><p>An ESG score is a starting point rather than a complete conclusion. The underlying issues differ by sector: emissions and energy can dominate heavy industry, while financed emissions, governance and data privacy can be more material in financial services. Always read the score alongside its methodology and source period.</p></div>
+    <div class="blog-card"><h3>From carbon data to management action</h3><p>Carbon data becomes more useful when it answers a decision question. Where are emissions concentrated? What reduction pathway is technically realistic? What would a carbon-cost scenario mean for operations? The dashboard's carbon tools are designed to support those questions without presenting scenario outputs as official compliance results.</p></div>
+    """, unsafe_allow_html=True)
+    st.markdown("### Environment in focus")
+    st.image("https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1600&q=80", use_container_width=True)
+    st.caption("Forests act as carbon stores, support biodiversity and influence water systems. The image is used as visual context; dashboard metrics should still be interpreted using the cited datasets and methodologies.")
+
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown(
-    "<p style='text-align:center;color:#609070;font-size:0.82rem'>"
+    "<p style='text-align:center;color:#60708C;font-size:0.82rem'>"
     "🌍 Climate Risk & ESG Dashboard · Data updated to 2026 · "
-    "Global: <a href='https://www.ipcc.ch' style='color:#4dff91'>IPCC AR6</a> + "
-    "<a href='https://www.iea.org' style='color:#4dff91'>IEA 2025</a> | "
-    "India: <a href='https://moef.gov.in' style='color:#4dff91'>MoEF SoE 2025</a> + "
-    "<a href='https://mnre.gov.in' style='color:#4dff91'>MNRE 2026</a>"
+    "Global: <a href='https://www.ipcc.ch' style='color:#315A9A'>IPCC AR6</a> + "
+    "<a href='https://www.iea.org' style='color:#315A9A'>IEA 2025</a> | "
+    "India: <a href='https://moef.gov.in' style='color:#315A9A'>MoEF SoE 2025</a> + "
+    "<a href='https://mnre.gov.in' style='color:#315A9A'>MNRE 2026</a>"
     "</p>",
     unsafe_allow_html=True
 )
